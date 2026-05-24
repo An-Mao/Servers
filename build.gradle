@@ -1,0 +1,113 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+    id 'net.minecraftforge.jarjar' version '0.2.3'
+}
+
+version           = mod_version
+group             = mod_group_id
+base.archivesName = mod_id
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    accessTransformer = true
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            args "-mixin.config=mixins.${mod_id}.json"
+        }
+
+        register('client')
+
+        register('server') {
+            args '--nogui'
+        }
+
+        register('gameTestServer')
+
+        register('data') {
+            workingDir = layout.projectDirectory.dir('run-data')
+
+            args '--mod', mod_id, '--all', '--output', layout.projectDirectory.dir('src/generated/resources'), '--existing', layout.projectDirectory.dir('src/main/resources')
+        }
+    }
+}
+
+jarJar.register() {
+    archiveClassifier = null
+}
+
+repositories {
+    mavenLocal()
+    flatDir {
+        dirs 'libs'
+    }
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Sponge'
+                url = 'https://repo.spongepowered.org/repository/maven-public'
+            }
+        }
+        filter {
+            includeGroupAndSubgroups('org.spongepowered')
+        }
+    }
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
+
+    implementation jarJar("dev.anye:core:$core_version")
+
+    compileOnly "org.openjdk.nashorn:nashorn-core:15.4"
+    compileOnly "net.java.dev.jna:jna-platform:5.15.0"
+    compileOnly "dev.anye.mc:graaljs:26.x-25.0.2-1-Forge-all"
+}
+
+tasks.named('processResources', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,core_version: core_version,
+    ]
+    inputs.property('replaceProperties', replaceProperties)
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : version,
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : version,
+                'Implementation-Vendor'   : mod_authors
+        ])
+        attributes['MixinConfigs'] = "mixins.${mod_id}.json"
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
