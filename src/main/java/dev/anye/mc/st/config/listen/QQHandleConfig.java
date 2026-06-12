@@ -2,13 +2,15 @@ package dev.anye.mc.st.config.listen;
 
 import com.google.gson.reflect.TypeToken;
 import dev.anye.core.json._JsonConfig;
+import dev.anye.core.system._File;
 import dev.anye.mc.st.ST;
+import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.config.Language;
 
 public class QQHandleConfig extends _JsonConfig<QQHandleConfigData> {
-    private static final String file = ST.ConfigDir_ListenHandle + "TencentQQ.json";
+    private static final String file = _File.getFilePath(ConfigDir.LISTEN_HANDLE , "TencentQQ.json");
     public static final QQHandleConfig I = new QQHandleConfig();
-    public static final Language Command = new Language(ST.ConfigDir_ListenHandle + "TencentQQCommand.json", """
+    public static final Language Command = new Language(_File.getFilePath(ConfigDir.LISTEN_HANDLE , "TencentQQCommand.json"), """
             {
                 "getServerInfo": "服务器信息",
                 "getServerList": "玩家列表",

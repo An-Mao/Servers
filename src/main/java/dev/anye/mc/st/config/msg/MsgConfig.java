@@ -1,6 +1,8 @@
 package dev.anye.mc.st.config.msg;
 
 import com.google.gson.reflect.TypeToken;
+import dev.anye.core.system._File;
+import dev.anye.mc.st.config.ConfigDir;
 import net.minecraft.server.level.ServerPlayer;
 import dev.anye.core.json._JsonConfig;
 import dev.anye.mc.st.ST;
@@ -18,7 +20,7 @@ public class MsgConfig{
 
 
     public static class FirstJoin extends _JsonConfig<MsgConfigData>{
-        private static final String file = ST.ConfigDir_Msg + "FirstJoin.json";
+        private static final String file = _File.getFilePath(ConfigDir.MSG , "FirstJoin.json");
         public final FirstLog firstLog = new FirstLog();
         public FirstJoin() {
             super(file, """
@@ -36,7 +38,7 @@ public class MsgConfig{
         }
     }
     public static class EveryDayJoin extends _JsonConfig<MsgConfigData>{
-        private static final String file = ST.ConfigDir_Msg + "EveryDayJoin.json";
+        private static final String file = _File.getFilePath(ConfigDir.MSG , "EveryDayJoin.json");
         private static String t = getDay();
         public final DayLog dayLog = new DayLog();
         public EveryDayJoin() {
@@ -70,7 +72,7 @@ public class MsgConfig{
         }
     }
     public static class EveryJoin extends _JsonConfig<MsgConfigData>{
-        private static final String file = ST.ConfigDir_Msg + "EveryJoin.json";
+        private static final String file = _File.getFilePath(ConfigDir.MSG , "EveryJoin.json");
         public EveryJoin() {
             super(file, """
                     {
@@ -87,7 +89,7 @@ public class MsgConfig{
 
 
     public static class FirstLog extends _JsonConfig<List<String>> {
-        private static final String file = ST.ConfigDir_Msg + "FirstLog.json";
+        private static final String file = _File.getFilePath(ConfigDir.MSG , "FirstLog.json");
         public FirstLog() {
             super(file, "", new TypeToken<>(){});
         }
@@ -98,7 +100,7 @@ public class MsgConfig{
         }
     }
     public static class DayLog extends _JsonConfig<HashMap<String,List<String>>> {
-        private static final String file = ST.ConfigDir_Msg + "DayLog.json";
+        private static final String file = _File.getFilePath(ConfigDir.MSG , "DayLog.json");
         public DayLog() {
             super(file, "", new TypeToken<>(){});
         }

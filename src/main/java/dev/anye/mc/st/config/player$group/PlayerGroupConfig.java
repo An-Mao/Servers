@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import dev.anye.core.json._JsonConfig;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.ST;
+import dev.anye.mc.st.config.ConfigDir;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class PlayerGroupConfig {
 
     public static HashMap<String,Group> getGroups() {
         HashMap<String,Group> abc = new HashMap<>();
-        List<Path> jsonFiles = _File.getFiles(ST.ConfigDir_PlayerGroup,".json");
+        List<Path> jsonFiles = _File.getFiles(ConfigDir.PLAYER_GROUP,".json");
         for (Path path : jsonFiles) {
             String fileName = path.getFileName().toString();
             abc.put(fileName,new Group(path.toString()));

@@ -8,15 +8,17 @@ import net.minecraft.server.level.ServerPlayer;
 import dev.anye.mc.st.data$type.PosData;
 import net.minecraft.world.entity.Relative;
 
+import java.util.Set;
+
 public class _MF {
 
-    public static boolean tp(ServerPlayer player, PosData posData) {
-        Identifier res = Identifier.tryParse(posData.Level);
-        if (res == null) return false;
-        ServerLevel serverLevel = player.level().getServer().getLevel(ResourceKey.create(Registries.DIMENSION, res));
-        if (serverLevel == null) return false;
-        player.teleportTo(serverLevel,posData.X,posData.Y,posData.Z, Relative.ALL,posData.Yaw,posData.Pitch,true);
-        return true;
-    }
+	public static boolean tp(ServerPlayer player, PosData posData) {
+		Identifier res = Identifier.tryParse(posData.Level);
+		if (res == null) return false;
+		ServerLevel serverLevel = player.level().getServer().getLevel(ResourceKey.create(Registries.DIMENSION, res));
+		if (serverLevel == null) return false;
+		player.teleportTo(serverLevel,posData.X,posData.Y,posData.Z, Set.of() ,posData.Yaw,posData.xRot,true);
+		return true;
+	}
 
 }

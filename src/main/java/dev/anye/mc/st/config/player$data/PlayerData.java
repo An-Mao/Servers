@@ -1,6 +1,7 @@
 package dev.anye.mc.st.config.player$data;
 
 import com.google.gson.reflect.TypeToken;
+import dev.anye.mc.st.config.ConfigDir;
 import net.minecraft.server.level.ServerPlayer;
 import dev.anye.core.json._JsonConfig;
 import dev.anye.core.system._File;
@@ -28,7 +29,7 @@ public class PlayerData extends _JsonConfig<PD> {
 
     public static HashMap<String, PlayerData> loadPlayerData() {
         HashMap<String, PlayerData> abc = new HashMap<>();
-        List<Path> jsonFiles = _File.getFiles(ST.ConfigDir_PlayerData, ".json");
+        List<Path> jsonFiles = _File.getFiles(ConfigDir.PLAYER_DATA, ".json");
         for (Path path : jsonFiles) {
             String fileName = path.getFileName().toString();
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
@@ -40,7 +41,7 @@ public class PlayerData extends _JsonConfig<PD> {
 
 
     public static PlayerData get(String uuid) {
-        return I.getOrDefault(uuid, new PlayerData(ST.ConfigDir_PlayerData + uuid + ".json"));
+        return I.getOrDefault(uuid, new PlayerData(_File.getFilePath(ConfigDir.PLAYER_DATA , uuid + ".json")));
     }
 
 

@@ -1,5 +1,7 @@
 package dev.anye.mc.st.helper;
 
+import dev.anye.core.system._File;
+import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.js.CJS;
 import dev.anye.mc.st.js._JavaScript;
 import net.minecraft.network.chat.Component;
@@ -62,7 +64,7 @@ public class MsgHelper {
             _JavaScript<?> easyJS = CJS.GetNewInstance();
             easyJS.addParameter("player", player);
             map.forEach(easyJS::addParameter);
-            Object result = easyJS.runFile(ST.ConfigDir_JavaScript+msg);
+            Object result = easyJS.runFile(_File.getFilePath(ConfigDir.JAVASCRIPT ,msg));
             if (result != null){
                 return result.toString();
             }

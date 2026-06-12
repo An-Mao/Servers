@@ -15,9 +15,9 @@ public class InventoryMixin {
     @Shadow @Final public Player player;
 
     @Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
-    public void ns$add$check(int i, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (BanItemHelper.checkItemAndSend(stack,this.player.level().getServer())){
-            //stack.setCount(0);
+    public void ns$add$check(int slot, ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
+
+        if (BanItemHelper.checkItemAndSend(itemStack,this.player.level().getServer())){
             cir.setReturnValue(false);
         }
     }

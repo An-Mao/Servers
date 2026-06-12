@@ -2,7 +2,9 @@ package dev.anye.mc.st.config.listen;
 
 import com.google.gson.reflect.TypeToken;
 import dev.anye.core.json._JsonConfig;
+import dev.anye.core.system._File;
 import dev.anye.mc.st.ST;
+import dev.anye.mc.st.config.ConfigDir;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -11,7 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class ListenConfig extends _JsonConfig<ListenData> {
-    private static final String File = ST.ConfigDir + "Listen.json";
+    private static final String File = _File.getFilePath(ConfigDir.BASE , "Listen.json");
     public static final ListenConfig I = new ListenConfig();
     public ListenConfig() {
         super(File, """

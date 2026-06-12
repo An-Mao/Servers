@@ -2,13 +2,15 @@ package dev.anye.mc.st.config.ban$item;
 
 import com.google.gson.reflect.TypeToken;
 import dev.anye.core.json._JsonConfig;
+import dev.anye.core.system._File;
 import dev.anye.mc.st.ST;
+import dev.anye.mc.st.config.ConfigDir;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BanItemConfig extends _JsonConfig<BanItemData> {
-    private static final String file = ST.ConfigDir_BlackList + "BanItem.json";
+    private static final String file = _File.getFilePath(ConfigDir.BLACK_LIST , "BanItem.json");
     public static final BanItemConfig I = new BanItemConfig();
     public BanItemConfig() {
         super(file, """

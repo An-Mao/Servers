@@ -1,6 +1,8 @@
 package dev.anye.mc.st.config.login$reward;
 
 import com.google.gson.reflect.TypeToken;
+import dev.anye.core.system._File;
+import dev.anye.mc.st.config.ConfigDir;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -15,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LoginReward extends _JsonConfig<LoginRewardData> {
-    private static final String file = ST.ConfigDir_Login + "LoginReward.json";
+    private static final String file = _File.getFilePath(ConfigDir.LOGIN , "LoginReward.json");
     public static final LoginReward I = new LoginReward();
-    public static final LoginData loginData = new LoginData(ST.ConfigDir_Login + "LoginData.json");
-    public static final PlayerLoginDataConfig playerLoginData = new PlayerLoginDataConfig(ST.ConfigDir_Login + "PlayerLoginData.json");
+    public static final LoginData loginData = new LoginData(_File.getFilePath(ConfigDir.LOGIN , "LoginData.json"));
+    public static final PlayerLoginDataConfig playerLoginData = new PlayerLoginDataConfig(_File.getFilePath(ConfigDir.LOGIN , "PlayerLoginData.json"));
     public static String day = null;
 
 

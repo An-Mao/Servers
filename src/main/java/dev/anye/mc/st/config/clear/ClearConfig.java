@@ -1,6 +1,8 @@
 package dev.anye.mc.st.config.clear;
 
 import com.google.gson.reflect.TypeToken;
+import dev.anye.core.system._File;
+import dev.anye.mc.st.config.ConfigDir;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import dev.anye.core.json._JsonConfig;
@@ -12,7 +14,7 @@ public class ClearConfig {
     public static final ItemClear ITEM_CLEAR = new ItemClear();
 
     public static class EntityClear extends _JsonConfig<EntityClearData>{
-        private static final String file = ST.ConfigDir_Clear + "entity.json";
+        private static final String file = _File.getFilePath(ConfigDir.CLEAR , "entity.json");
         public EntityClear() {
             super(file, """
                     {
@@ -71,7 +73,7 @@ public class ClearConfig {
 
     }
     public static class ItemClear extends _JsonConfig<ItemClearData>{
-        private static final String file = ST.ConfigDir_Clear + "item.json";
+        private static final String file = _File.getFilePath(ConfigDir.CLEAR , "item.json");
         public ItemClear() {
             super(file, """
                     {

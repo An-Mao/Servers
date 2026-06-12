@@ -2,6 +2,7 @@ package dev.anye.mc.st.config;
 
 import com.google.gson.reflect.TypeToken;
 import com.mojang.logging.LogUtils;
+import dev.anye.core.system._File;
 import net.minecraft.network.chat.Component;
 import dev.anye.core.json._JsonConfig;
 import dev.anye.mc.st.ST;
@@ -14,7 +15,7 @@ import java.util.Locale;
 public class Language extends _JsonConfig<HashMap<String, String>> {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String filePath = getLanguage();
-    public static final Language Default = new Language(ST.ConfigDir_Language + "default.json",true);
+    public static final Language Default = new Language(_File.getFilePath(ConfigDir.LANGUAGE , "default.json"),true);
     public static final Language I = new Language(filePath,false);
 
 
@@ -25,8 +26,8 @@ public class Language extends _JsonConfig<HashMap<String, String>> {
             lang = defaultLocale.getLanguage()+"_"+defaultLocale.getCountry();
         }
         lang = lang.toLowerCase();
-        File file = new File(ST.ConfigDir_Language + lang + ".json");
-        if (!file.exists()) return ST.ConfigDir_Language + "en_us.json";
+        File file = new File(_File.getFilePath(ConfigDir.LANGUAGE , lang + ".json"));
+        if (!file.exists()) return _File.getFilePath(ConfigDir.LANGUAGE , "en_us.json");
         return file.getPath();
     }
 
