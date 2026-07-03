@@ -34,7 +34,7 @@ repositories {
         url = uri("https://maven.pkg.github.com/An-Mao/JavaDevCore")
         credentials {
             username = "An-Mao"
-            password = "ghp_" + System.getenv("GTT")
+            password = System.getenv("GITHUB_TOKEN") ?: "ghp_" + System.getenv("GTT")
         }
     }
 }
