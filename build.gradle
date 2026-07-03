@@ -37,6 +37,13 @@ repositories {
             password = System.getenv("GITHUB_TOKEN") ?: "ghp_" + System.getenv("GTT")
         }
     }
+	maven {
+        url = uri("https://maven.pkg.github.com/An-Mao/GraalJS")
+        credentials {
+            username = "An-Mao"
+            password = System.getenv("GITHUB_TOKEN") ?: "ghp_" + System.getenv("GTT")
+        }
+    }
 }
 
 base {
