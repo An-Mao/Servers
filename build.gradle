@@ -23,11 +23,11 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    maven {
-        name = "LocalRepo"
-        allowInsecureProtocol = true
-        url = uri("http://192.168.2.223:8081/repository/maven-public")
-    }
+    // maven {
+    //     name = "LocalRepo"
+    //     allowInsecureProtocol = true
+    //     url = uri("http://192.168.2.223:8081/repository/maven-public")
+    // }
     maven {
         url = uri("https://maven.pkg.github.com/An-Mao/JavaDevCore")
         credentials {
