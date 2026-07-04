@@ -24,6 +24,11 @@ repositories {
         dirs 'libs'
     }
     maven {
+        name = "LocalRepo"
+        allowInsecureProtocol = true
+        url = uri("http://192.168.2.223:8081/repository/maven-public")
+    }
+    maven {
         url = uri("https://maven.pkg.github.com/An-Mao/JavaDevCore")
         credentials {
             username = "An-Mao"
@@ -41,11 +46,6 @@ repositories {
         name = "AnYeRepo"
         allowInsecureProtocol = true
         url = uri("https://maven.anye.dev/repository/maven-public")
-    }
-    maven {
-        name = "LocalRepo"
-        allowInsecureProtocol = true
-        url = uri("http://192.168.2.223:8081/repository/maven-public")
     }
 }
 
