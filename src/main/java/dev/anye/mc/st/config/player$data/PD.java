@@ -7,21 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PD {
-    public PosData home;
-    public List<PosData> backs;
-    public PD() {
-        home = new PosData();
-        backs = new ArrayList<>();
-    }
+	public PosData home;
+	public List<PosData> backs;
 
-    public PosData getHome() {
-        return home;
-    }
+	public PD() {
+		home = new PosData();
+		backs = new ArrayList<>();
+	}
+
+	public PosData getHome() {
+		return home;
+	}
 
 
-    public void addBack(PosData pd) {
-        if (backs == null) backs = new ArrayList<>();
-        else if (backs.size() >= CommandConfig.I.getDatas().backMaxCount) backs.removeFirst();
-        backs.add(pd);
-    }
+	public void addBack(PosData pd) {
+		if (backs == null) backs = new ArrayList<>();
+		else if (backs.size() >= CommandConfig.I.getDatas().backMaxCount) backs.removeFirst();
+		backs.add(pd);
+	}
 }

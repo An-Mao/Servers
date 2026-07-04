@@ -1,17 +1,16 @@
 {
-	"required": true,
-	"minVersion": "0.8",
-	"package": "dev.anye.mc.st.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"refmap": "refmap.st.json",
-	"mixins": [
-		"InventoryMixin",
-		"ItemStackMixin"
-	],
-	"client": [
-		
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.anye.mc.st.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "refmap.st.json",
+  "mixins": [
+    "InventoryMixin",
+    "ItemStackMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
