@@ -23,7 +23,7 @@ public class PlayerHelper {
 				return;
 			}
 			if (PlayerGroupConfig.GROUPS.containsKey(s)) {
-				has[0] = checkPlayer(player, PlayerGroupConfig.GROUPS.get(s).getDatas());
+				has[0] = checkPlayer(player, PlayerGroupConfig.GROUPS.get(s).getData());
 			}
 		});
 		return has[0];
@@ -34,7 +34,7 @@ public class PlayerHelper {
 		if (s.equals(player.getName().getString())) return true;
 		if (PlayerGroupConfig.GROUPS.containsKey(s)) {
 			boolean[] has = {false};
-			PlayerGroupConfig.GROUPS.get(s).getDatas().forEach(s1 -> {
+			PlayerGroupConfig.GROUPS.get(s).getData().forEach(s1 -> {
 				has[0] = checkPlayer(player, s1);
 			});
 			return has[0];

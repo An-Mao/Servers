@@ -55,5 +55,8 @@
   "get_server_info.command.listen.host": "host",
   "get_server_info.command.listen.port": "port",
   "get_server_info.command.listen.description": "description",
-  "get_server_info.command.listen.version": "version"
+  "get_server_info.command.listen.version": "version",
+  "set_lang.command.success": "set language success",
+  "set_lang.command.wainning": "the code language not load",
+  "set_lang.command.failed": "set language failed"
 }

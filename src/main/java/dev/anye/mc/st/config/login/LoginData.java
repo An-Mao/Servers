@@ -1,19 +1,19 @@
 package dev.anye.mc.st.config.login;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class LoginData {
-	public boolean enable;
-	public String success;
-	public String fail;
-	public int time;
-	private HashMap<String, String> passwords;
-
-	public HashMap<String, String> getPasswords() {
-		return passwords;
-	}
-
-	public void setPasswords(HashMap<String, String> passwords) {
-		this.passwords = passwords;
-	}
+public record LoginData(
+	boolean enable,
+	String success,
+	String fail,
+	int time,
+	Map<String, String> passwords) {
+	public static final LoginData DEFAULT = new LoginData(
+			true,
+			"login.success",
+			"login.failed",
+			1200,
+			new HashMap<>()
+	);
 }

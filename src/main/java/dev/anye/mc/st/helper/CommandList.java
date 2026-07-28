@@ -3,7 +3,7 @@ package dev.anye.mc.st.helper;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.anye.mc.st.config.command.CommandConfig;
-import dev.anye.mc.st.data$type.CommandData;
+import dev.anye.mc.st.data_type.CommandData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandList {
-	private static final String root = CommandConfig.I.getDatas().commandRoot;
+	private static final String root = CommandConfig.I.getData().commandRoot();
 	public List<CommandData> commands;
 	private final CommandDispatcher<CommandSourceStack> dispatcher;
 

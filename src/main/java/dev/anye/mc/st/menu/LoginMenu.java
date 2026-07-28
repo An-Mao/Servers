@@ -44,15 +44,15 @@ public class LoginMenu extends AbstractContainerMenu {
 			itemHandler.set(i, ItemResource.of(itemStack), itemStack.getCount());
 		}
 		itemStack = new ItemStack(Items.BREEZE_ROD);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent("login.menu.button.clear"));
+		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent(serverPlayer,"login.menu.button.clear"));
 		itemHandler.set(inputSlots[9], ItemResource.of(itemStack), itemStack.getCount());
 
 		itemStack = new ItemStack(Items.ENDER_PEARL);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent("0"));
+		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent(serverPlayer,"0"));
 		itemHandler.set(inputSlots[10], ItemResource.of(itemStack), itemStack.getCount());
 
 		itemStack = new ItemStack(Items.BLAZE_ROD);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent("login.menu.button.login"));
+		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent(serverPlayer,"login.menu.button.login"));
 		itemHandler.set(inputSlots[11], ItemResource.of(itemStack), itemStack.getCount());
 		addSlots();
 	}
@@ -132,7 +132,7 @@ public class LoginMenu extends AbstractContainerMenu {
 	@Override
 	public void removed(Player pPlayer) {
 		if (!LoginHelper.isLogin((ServerPlayer) pPlayer)) {
-			serverPlayer.connection.disconnect(Language.getComponent("login.failed"));
+			serverPlayer.connection.disconnect(Language.getComponent(serverPlayer,"login.failed"));
 		}
 		super.removed(pPlayer);
 	}

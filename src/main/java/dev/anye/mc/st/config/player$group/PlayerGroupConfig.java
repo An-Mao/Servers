@@ -29,15 +29,10 @@ public class PlayerGroupConfig {
 			});
 		}
 
-		@Override
-		public List<String> getDatas() {
-			if (datas == null) datas = new ArrayList<>();
-			return datas;
-		}
 
 		@Override
 		public String toString() {
-			return datas.toString();
+			return data.toString();
 		}
 	}
 }

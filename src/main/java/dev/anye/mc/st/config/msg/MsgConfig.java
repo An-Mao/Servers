@@ -11,66 +11,67 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MsgConfig {
-	public static final FirstJoin firstJoin = new FirstJoin();
-	public static final EveryDayJoin everyDayJoin = new EveryDayJoin();
-	public static final EveryJoin everyJoin = new EveryJoin();
-
-
+	private static final String FIRST_JOIN_FILE = _File.getFilePath(ConfigDir.MSG, "FirstJoin.json");
+	private static final String EVERY_DAY_JOIN_FILE = _File.getFilePath(ConfigDir.MSG, "EveryDayJoin.json");
+	private static final String EVERY_JOIN_FILE = _File.getFilePath(ConfigDir.MSG, "EveryJoin.json");
+	public static final FirstJoin FIRST_JOIN = new FirstJoin();
+	public static final EveryDayJoin EVERY_DAY_JOIN = new EveryDayJoin();
+	public static final EveryJoin EVERY_JOIN = new EveryJoin();
+	private MsgConfig(){}
 	public static class FirstJoin extends _JsonConfig<MsgConfigData> {
-		private static final String file = _File.getFilePath(ConfigDir.MSG, "FirstJoin.json");
 		public final FirstLog firstLog = new FirstLog();
-
 		public FirstJoin() {
-			super(file, """
-					{
-					    "enable": true,
-					    "msg": "This is First Join Message!"
-					}
-					""", new TypeToken<>() {
-			});
+			super(FIRST_JOIN_FILE, MsgConfigData.FIRST_JOIN_DEFAULT, new TypeToken<>() {});
 		}
 
 		public void send(ServerPlayer serverPlayer) {
-			if (firstLog.getDatas().contains(serverPlayer.getStringUUID())) return;
-			MsgHelper.sendMsgToPlayerF(serverPlayer, getDatas().getMsg());
-			firstLog.getDatas().add(serverPlayer.getStringUUID());
-			firstLog.save();
+			ifPresent(msgConfigData -> {
+				if (msgConfigData.enable()) {
+					firstLog.ifPresent(log ->{
+						if (log.contains(serverPlayer.getStringUUID())) return;
+						MsgHelper.sendMsgToPlayerF(serverPlayer, msgConfigData.msg());
+						log.add(serverPlayer.getStringUUID());
+						firstLog.save();
+					});
+				}
+			});
 		}
 	}
 
 	public static class EveryDayJoin extends _JsonConfig<MsgConfigData> {
-		private static final String file = _File.getFilePath(ConfigDir.MSG, "EveryDayJoin.json");
-		private static String t = getDay();
+		private static String today = getDay();
 		public final DayLog dayLog = new DayLog();
 
 		public EveryDayJoin() {
-			super(file, """
-					{
-					    "enable": true,
-					    "msg": "This is Every Day Join Message!"
-					}
-					""", new TypeToken<>() {
-			});
+			super(EVERY_DAY_JOIN_FILE, MsgConfigData.EVERY_DAY_JOIN_DEFAULT, new TypeToken<>() {});
 		}
 
 		public void send(ServerPlayer serverPlayer) {
-			List<String> list = dayLog.getDatas().getOrDefault(t, new ArrayList<>());
-			if (t.equals(getDay())) {
-				if (!dayLog.getDatas().getOrDefault(t, new ArrayList<>()).contains(serverPlayer.getStringUUID())) {
-					MsgHelper.sendMsgToPlayerF(serverPlayer, getDatas().getMsg());
-				} else {
-					return;
+			ifPresent(msgConfigData -> {
+				if (msgConfigData.enable()){
+					dayLog.ifPresent(stringListHashMap -> {
+						List<String> list = stringListHashMap.getOrDefault(today, new ArrayList<>());
+
+						if (today.equals(getDay())) {
+							if (!stringListHashMap.getOrDefault(today, new ArrayList<>()).contains(serverPlayer.getStringUUID())) {
+								MsgHelper.sendMsgToPlayerF(serverPlayer, msgConfigData.msg());
+							} else {
+								return;
+							}
+						} else {
+							MsgHelper.sendMsgToPlayerF(serverPlayer, msgConfigData.msg());
+							today = getDay();
+							stringListHashMap.clear();
+						}
+						list.add(serverPlayer.getStringUUID());
+						stringListHashMap.put(today, list);
+						dayLog.save();
+					});
 				}
-			} else {
-				MsgHelper.sendMsgToPlayerF(serverPlayer, getDatas().getMsg());
-				t = getDay();
-				dayLog.getDatas().clear();
-			}
-			list.add(serverPlayer.getStringUUID());
-			dayLog.getDatas().put(t, list);
-			dayLog.save();
+			});
 		}
 
 		public static String getDay() {
@@ -79,52 +80,32 @@ public class MsgConfig {
 	}
 
 	public static class EveryJoin extends _JsonConfig<MsgConfigData> {
-		private static final String file = _File.getFilePath(ConfigDir.MSG, "EveryJoin.json");
-
 		public EveryJoin() {
-			super(file, """
-					{
-					    "enable": true,
-					    "msg": "This is Every Join Message!"
-					}
-					""", new TypeToken<>() {
+			super(EVERY_JOIN_FILE, MsgConfigData.EVERY_JOIN_DEFAULT, new TypeToken<>() {
 			});
 		}
 
 		public void send(ServerPlayer serverPlayer) {
-			MsgHelper.sendMsgToPlayerF(serverPlayer, getDatas().getMsg());
-
+			ifPresent(msgConfigData -> {
+				if (msgConfigData.enable()) MsgHelper.sendMsgToPlayerF(serverPlayer, msgConfigData.msg());
+			});
 		}
 	}
 
 
 	public static class FirstLog extends _JsonConfig<List<String>> {
-		private static final String file = _File.getFilePath(ConfigDir.MSG, "FirstLog.json");
-
+		private static final String FILE = _File.getFilePath(ConfigDir.MSG, "FirstLog.json");
 		public FirstLog() {
-			super(file, "", new TypeToken<>() {
-			});
-		}
-
-		@Override
-		public List<String> getDatas() {
-			if (datas == null) datas = new ArrayList<>();
-			return datas;
+			super(FILE, new ArrayList<>(), new TypeToken<>(){});
 		}
 	}
 
-	public static class DayLog extends _JsonConfig<HashMap<String, List<String>>> {
-		private static final String file = _File.getFilePath(ConfigDir.MSG, "DayLog.json");
+	public static class DayLog extends _JsonConfig<Map<String, List<String>>> {
+		private static final String FILE = _File.getFilePath(ConfigDir.MSG, "DayLog.json");
 
 		public DayLog() {
-			super(file, "", new TypeToken<>() {
-			});
+			super(FILE, new HashMap<>(), new TypeToken<>() {});
 		}
 
-		@Override
-		public HashMap<String, List<String>> getDatas() {
-			if (datas == null) datas = new HashMap<>();
-			return datas;
-		}
 	}
 }

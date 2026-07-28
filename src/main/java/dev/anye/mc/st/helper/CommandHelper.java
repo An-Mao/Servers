@@ -4,18 +4,19 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import dev.anye.mc.st.config.Config;
 import dev.anye.mc.st.config.Language;
-import dev.anye.mc.st.config.ban$item.BanItemConfig;
-import dev.anye.mc.st.config.black$list.BlackListConfig;
+import dev.anye.mc.st.config.ban_item.BanItemConfig;
+import dev.anye.mc.st.config.black_list.BlackListConfig;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.command.CommandConfig;
-import dev.anye.mc.st.config.login$reward.LoginReward;
+import dev.anye.mc.st.config.login_reward.LoginReward;
 import dev.anye.mc.st.config.msg.MsgConfig;
-import dev.anye.mc.st.config.player$data.PlayerData;
+import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.config.player$group.PlayerGroupConfig;
-import dev.anye.mc.st.data$type.PosData;
+import dev.anye.mc.st.data_type.PosData;
 import dev.anye.mc.st.menu.LoginMenu;
 import dev.anye.mc.st.menu.TrashBinContainer;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Relative;
@@ -28,21 +29,21 @@ public class CommandHelper {
 	private static final int SUCCESS = Command.SINGLE_SUCCESS;
 
 	public static int trash(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getDatas().trash) {
+		if (CommandConfig.I.getData().trash()) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player == null) return FAILED;
 			if (ClearHelper.isClearTrashBin) {
-				context.getSource().sendSuccess(() -> Language.getComponent("trash.command.error.cleaning"), false);
+				sendSuccess(context,"trash.command.error.cleaning");
 				return SUCCESS;
 			}
 			if (TrashBinContainer.nowPlayer != null) {
-				context.getSource().sendSuccess(() -> Language.getComponent("trash.command.error.has_player"), false);
+				sendSuccess(context,"trash.command.error.has_player");
 				return SUCCESS;
 			}
 			TrashBinContainer.nowPlayer = player;
 			player.openMenu(new SimpleMenuProvider(
 					(id, playerInventory, playerEntity) -> new TrashBinContainer(id, playerInventory),
-					Language.getComponent("trash.menu.title")
+					Language.getComponent(player,"trash.menu.title")
 			));
 			return SUCCESS;
 		}
@@ -54,7 +55,7 @@ public class CommandHelper {
 		if (player != null) {
 			player.openMenu(new SimpleMenuProvider(
 					(id, playerInventory, playerEntity) -> new LoginMenu(id, player),
-					Language.getComponent("password.menu.title")
+					Language.getComponent(player,"password.menu.title")
 			));
 			return SUCCESS;
 		}
@@ -88,71 +89,71 @@ public class CommandHelper {
 		PlayerGroupConfig.GROUPS.putAll(PlayerGroupConfig.getGroups());
 		ClearConfig.ENTITY_CLEAR.init();
 		ClearConfig.ITEM_CLEAR.init();
-		MsgConfig.firstJoin.init();
-		MsgConfig.everyDayJoin.init();
-		MsgConfig.everyJoin.init();
-		Language.I.init();
-		BlackListConfig.instance.init();
+		MsgConfig.FIRST_JOIN.init();
+		MsgConfig.EVERY_DAY_JOIN.init();
+		MsgConfig.EVERY_JOIN.init();
+		Language.reloadLanguage();
+		BlackListConfig.INSTANCE.init();
 		BanItemConfig.I.init();
 		LoginReward.I.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.all"), false);
+		sendSuccess(context,"reload.success.all");
 		return SUCCESS;
 	}
 
 	public static int reloadConfig(CommandContext<CommandSourceStack> context) {
 		Config.I.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.config"), false);
+		sendSuccess(context,"reload.success.config");
 		return SUCCESS;
 	}
 
 	public static int reloadPlayerGroup(CommandContext<CommandSourceStack> context) {
 		PlayerGroupConfig.GROUPS.clear();
 		PlayerGroupConfig.GROUPS.putAll(PlayerGroupConfig.getGroups());
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.player_group"), false);
+		sendSuccess(context,"reload.success.player_group");
 		return SUCCESS;
 	}
 
 	public static int reloadClear(CommandContext<CommandSourceStack> context) {
 		ClearConfig.ENTITY_CLEAR.init();
 		ClearConfig.ITEM_CLEAR.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.clear"), false);
+		sendSuccess(context,"reload.success.clear");
 		return SUCCESS;
 	}
 
 	public static int reloadMsg(CommandContext<CommandSourceStack> context) {
-		MsgConfig.firstJoin.init();
-		MsgConfig.everyDayJoin.init();
-		MsgConfig.everyJoin.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.msg"), false);
+		MsgConfig.FIRST_JOIN.init();
+		MsgConfig.EVERY_DAY_JOIN.init();
+		MsgConfig.EVERY_JOIN.init();
+		sendSuccess(context,"reload.success.msg");
 		return SUCCESS;
 	}
 
 	public static int reloadLanguage(CommandContext<CommandSourceStack> context) {
-		Language.I.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.language"), false);
+		Language.reloadLanguage();
+		sendSuccess(context,"reload.success.language");
 		return SUCCESS;
 	}
 
 	public static int reloadBlackList(CommandContext<CommandSourceStack> context) {
-		BlackListConfig.instance.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.black_list"), false);
+		BlackListConfig.INSTANCE.init();
+		sendSuccess(context,"reload.success.black_list");
 		return SUCCESS;
 	}
 
 	public static int reloadBanItem(CommandContext<CommandSourceStack> context) {
 		BanItemConfig.I.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.ban_item"), false);
+		sendSuccess(context,"reload.success.ban_item");
 		return SUCCESS;
 	}
 
 	public static int reloadReward(CommandContext<CommandSourceStack> context) {
 		LoginReward.I.init();
-		context.getSource().sendSuccess(() -> Language.getComponent("reload.success.reward"), false);
+		sendSuccess(context,"reload.success.reward");
 		return SUCCESS;
 	}
 
 	public static int reward(CommandContext<CommandSourceStack> context) {
-		if (LoginReward.I.getDatas().enable && CommandConfig.I.getDatas().reward) {
+		if (LoginReward.I.getData().enable() && CommandConfig.I.getData().reward()) {
 			ServerPlayer ser = context.getSource().getPlayer();
 			if (ser == null) return FAILED;
 			if (LoginRewardHelper.getRewards(ser)) return SUCCESS;
@@ -161,110 +162,117 @@ public class CommandHelper {
 	}
 
 	public static int setHome(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getDatas().setHome) {
+		if (CommandConfig.I.getData().setHome()) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
-				PlayerData pd = PlayerData.get(player.getStringUUID());
+				PlayerConfig pd = PlayerConfig.get(player.getStringUUID());
 				//player.level().dimension().toString();
 				pd.setHome(PosData.create(player));
-				context.getSource().sendSuccess(() -> Language.getComponent("command.set_home.success"), false);
+				sendSuccess(context,"command.set_home.success");
 				return SUCCESS;
 			}
 		}
-		context.getSource().sendFailure(Language.getComponent("command.set_home.failed"));
+		sendFailure(context,"command.set_home.failed");
 		return FAILED;
 	}
 
 	public static int home(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getDatas().home) {
+		if (CommandConfig.I.getData().home()) {
 
 
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
-				PlayerData pd = PlayerData.get(player.getStringUUID());
-				PosData home = pd.getDatas().getHome();
+				PlayerConfig pd = PlayerConfig.get(player.getStringUUID());
+				PosData home = pd.getData().getHome();
 				if (home != null) {
 					pd.addBack(player);
 					if (_MF.tp(player, home)) {
-						context.getSource().sendSuccess(() -> Language.getComponent("command.home.success"), false);
+						sendSuccess(context,"command.home.success");
 						return SUCCESS;
 					}
 				}
 			}
 		}
-		context.getSource().sendFailure(Language.getComponent("command.home.failed"));
+		sendFailure(context,"command.home.failed");
 		return FAILED;
 	}
 
 	public static int back(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getDatas().back) {
+		if (CommandConfig.I.getData().back()) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
-				PlayerData pd = PlayerData.get(player.getStringUUID());
+				PlayerConfig pd = PlayerConfig.get(player.getStringUUID());
 				PosData back = pd.getBack();
 				if (back != null) {
 					if (_MF.tp(player, back)) {
-						context.getSource().sendSuccess(() -> Language.getComponent("command.back.success"), false);
+						sendSuccess(context,"command.back.success");
 						return SUCCESS;
 					}
 				}
 			}
 		}
-		context.getSource().sendFailure(Language.getComponent("command.back.failed"));
+		sendFailure(context,"command.back.failed");
 		return FAILED;
 	}
 
 	private static final HashMap<String, UUID> tpaQueue = new HashMap<>();
 
 	public static int tpa(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer) {
-		if (CommandConfig.I.getDatas().tpa) {
+		if (CommandConfig.I.getData().tpa()) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null && targetPlayer != null) {
 				tpaQueue.put(targetPlayer.getStringUUID(), player.getUUID());
-				context.getSource().sendSuccess(() -> Language.getComponent("command.tpa.success"), false);
+				sendSuccess(context,"command.tpa.success");
 				HashMap<String, Object> map = new HashMap<>();
 				map.put("_tpa_send_player", player);
-				MsgHelper.sendWithArgs(targetPlayer, Language.get("command.tpa.msg"), map);
+				MsgHelper.sendWithArgs(targetPlayer, Language.translatable(targetPlayer,"command.tpa.msg"), map);
 				return SUCCESS;
 			}
 		}
-		context.getSource().sendFailure(Language.getComponent("command.tpa.failed"));
+		sendFailure(context,"command.tpa.failed");
 		return FAILED;
 	}
 
 	public static int tpaAccept(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getDatas().tpaAccept) {
+		if (CommandConfig.I.getData().tpaAccept()) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
 				if (tpaQueue.containsKey(player.getStringUUID())) {
 					ServerPlayer targetPlayer = player.level().getServer().getPlayerList().getPlayer(tpaQueue.get(player.getStringUUID()));
 					if (targetPlayer != null) {
-						PlayerData.get(targetPlayer.getStringUUID()).addBack(targetPlayer);
+						PlayerConfig.get(targetPlayer.getStringUUID()).addBack(targetPlayer);
 						targetPlayer.teleportTo(player.level(), player.getX(), player.getY(), player.getZ(), Relative.ALL, player.getYRot(), player.getXRot(), true);
-						context.getSource().sendSuccess(() -> Language.getComponent("command.tpa_accept.success"), false);
+						sendSuccess(context,"command.tpa_accept.success");
 						tpaQueue.remove(player.getStringUUID());
 						return SUCCESS;
 					}
 				}
 			}
 		}
-		context.getSource().sendFailure(Language.getComponent("command.tpa_accept.failed"));
+		sendFailure(context,"command.tpa_accept.failed");
 		return FAILED;
 	}
 
 	public static int tpaDeny(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getDatas().tpaDeny) {
+		if (CommandConfig.I.getData().tpaDeny()) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
 				if (tpaQueue.containsKey(player.getStringUUID())) {
 					tpaQueue.remove(player.getStringUUID());
-					context.getSource().sendSuccess(() -> Language.getComponent("command.tpa_deny.success"), false);
+					sendSuccess(context,"command.tpa_deny.success");
 					return SUCCESS;
 				}
 			}
 		}
-		context.getSource().sendFailure(Language.getComponent("command.tpa_deny.failed"));
+		sendFailure(context,"command.tpa_deny.failed");
 		return FAILED;
 	}
 
+
+	public static void sendSuccess(CommandContext<CommandSourceStack> context, String msg){
+		context.getSource().sendSuccess(()->Language.getComponent(context.getSource().getPlayer(),msg),false);
+	}
+	public static void sendFailure(CommandContext<CommandSourceStack> context, String msg){
+		context.getSource().sendFailure(Language.getComponent(context.getSource().getPlayer(),msg));
+	}
 }

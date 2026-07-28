@@ -1,6 +1,6 @@
 package dev.anye.mc.st.helper;
 
-import dev.anye.mc.st.data$type.PosData;
+import dev.anye.mc.st.data_type.PosData;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;

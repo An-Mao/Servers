@@ -26,6 +26,6 @@ public class ConfigDir {
 		_File.checkAndCreateDir(LOGIN);
 		_File.checkAndCreateDir(DATA);
 		_File.checkAndCreateDir(PLAYER_DATA);
-		_File.checkAndCreateDir(LISTEN_HANDLE);
+		//_File.checkAndCreateDir(LISTEN_HANDLE);
 	}
 }

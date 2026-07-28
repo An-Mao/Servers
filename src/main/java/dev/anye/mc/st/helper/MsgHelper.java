@@ -4,6 +4,7 @@ import dev.anye.core.format._FormatToString;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.js.CJS;
 import dev.anye.mc.st.js._JavaScript;
 import net.minecraft.network.chat.Component;
@@ -12,10 +13,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MsgHelper {
 
-	public static HashMap<String, String> createMsgMap(String a, String b) {
+	public static Map<String, String> createMsgMap(String a, String b) {
 		HashMap<String, String> map = new HashMap<>();
 		map.put(a, b);
 		return map;
@@ -23,18 +25,16 @@ public class MsgHelper {
 
 	public static void sendServerMsg(MinecraftServer server, String msg) {
 		if (msg.isEmpty() || server == null) return;
-		String M = Language.getOrDefault(msg, msg);
-		server.getPlayerList().getPlayers().forEach(serverPlayer -> MsgHelper.sendMsgToPlayer(serverPlayer, M));
+
+		server.getPlayerList().getPlayers().forEach(serverPlayer -> PlayerConfig.get(serverPlayer).sendMessage(serverPlayer,msg,msg));
 	}
 
-	public static void sendServerMsg(MinecraftServer server, String msg, HashMap<String, String> map) {
+	public static void sendServerMsg(MinecraftServer server, String msg, Map<String, String> map) {
 		if (msg.isEmpty() || server == null) return;
-		String[] M = {Language.getOrDefault(msg, msg)};
-		map.forEach((s, s2) -> M[0] = M[0].replace(s, s2));
-		server.getPlayerList().getPlayers().forEach(serverPlayer -> MsgHelper.sendMsgToPlayer(serverPlayer, M[0]));
+		server.getPlayerList().getPlayers().forEach(serverPlayer -> PlayerConfig.get(serverPlayer).sendFormatMessage(serverPlayer,msg,msg,map));
 	}
 
-	public static void sendServerMsg(ServerLevel serverLevel, String msg) {
+	public static void sendServerMsg(ServerLevel serverLevel,String msg) {
 		if (msg.isEmpty() || serverLevel == null) return;
 		sendServerMsg(serverLevel.getServer(), msg);
 		//serverLevel.getServer().getPlayerList().getPlayers().forEach(serverPlayer -> MsgHelper.sendServerMsg(serverPlayer,msg));
@@ -43,18 +43,22 @@ public class MsgHelper {
 
 	public static void sendMsgToPlayerF(ServerPlayer serverPlayer, String msg) {
 		if (msg.isEmpty()) return;
-		sendMsgToPlayer(serverPlayer, Language.getOrDefault(msg, msg));
-
+		PlayerConfig.get(serverPlayer).sendMessage(serverPlayer,msg);
+		//sendMsgToPlayer(serverPlayer, Language.getOrDefault(msg, msg));
 	}
 
 	public static void sendMsgToPlayerF(ServerPlayer serverPlayer, String msg, HashMap<String, String> map) {
 		if (msg.isEmpty()) return;
+		PlayerConfig.get(serverPlayer).sendFormatMessage(serverPlayer,msg,map);
+		/*
 		String[] M = {Language.getOrDefault(msg, msg)};
 		map.forEach((s, s2) -> M[0] = M[0].replace(s, s2));
 		sendMsgToPlayer(serverPlayer, M[0]);
+
+		 */
 	}
 
-	private static void sendMsgToPlayer(ServerPlayer serverPlayer, String msg) {
+	public static void sendMsgToPlayer(ServerPlayer serverPlayer, String msg) {
 		if (msg.isEmpty()) return;
 		msg = MsgHelper.format(serverPlayer, msg, new HashMap<>());
 		if (msg.isEmpty()) return;

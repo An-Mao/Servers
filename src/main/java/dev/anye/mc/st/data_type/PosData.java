@@ -1,4 +1,4 @@
-package dev.anye.mc.st.data$type;
+package dev.anye.mc.st.data_type;
 
 import net.minecraft.server.level.ServerPlayer;
 

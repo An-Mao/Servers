@@ -16,7 +16,7 @@ public class LoginHelper {
 	private static final List<String> players = new ArrayList<>();
 
 	public static boolean checkLogin(ServerPlayer serverPlayer) {
-		if (LoginConfig.INSTANCE.getDatas().enable) {
+		if (LoginConfig.INSTANCE.getData().enable()) {
 			return !LoginHelper.isLogin(serverPlayer);
 		}
 		return false;
@@ -31,7 +31,7 @@ public class LoginHelper {
 		}
 		serverPlayer.openMenu(new SimpleMenuProvider(
 				(id, playerInventory, playerEntity) -> new LoginMenu(id, serverPlayer),
-				Language.getComponent("login.menu.title")
+				Language.getComponent(serverPlayer,"login.menu.title")
 		));
 	}
 
@@ -50,22 +50,22 @@ public class LoginHelper {
 
 	public static boolean Login(ServerPlayer player, String password) {
 		if (isLogin(player)) {
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getDatas().fail);
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().fail());
 			return false;
 		}
 		if (!LoginConfig.INSTANCE.getPasswords().containsKey(player.getStringUUID())) {
 			LoginConfig.INSTANCE.getPasswords().put(player.getStringUUID(), encodePassword(password));
 			LoginConfig.INSTANCE.save();
 			addLogin(player);
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getDatas().success);
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().success());
 			return true;
 		} else {
 			if (LoginConfig.INSTANCE.getPasswords().get(player.getStringUUID()).equals(encodePassword(password))) {
 				addLogin(player);
-				MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getDatas().success);
+				MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().success());
 				return true;
 			}
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getDatas().fail);
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().fail());
 			return false;
 		}
 	}

@@ -4,12 +4,10 @@ import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.Config;
 import dev.anye.mc.st.config.Language;
 import dev.anye.mc.st.config.clear.ClearConfig;
-import dev.anye.mc.st.config.listen.ListenConfig;
 import dev.anye.mc.st.config.login.LoginConfig;
 import dev.anye.mc.st.helper.ClearHelper;
 import dev.anye.mc.st.helper.LoginHelper;
 import dev.anye.mc.st.helper.MsgHelper;
-import dev.anye.mc.st.listen.Listen;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,22 +34,22 @@ public class TickEvent {
 	private static final Thread tt = new Thread(() -> {
 		while (runThread) {
 			try {
-				if (!clearItem && ClearConfig.ITEM_CLEAR.getDatas().enable && ClearConfig.ITEM_CLEAR.getDatas().autoClearTime > 0) {
-					if (itemTime < ClearConfig.ITEM_CLEAR.getDatas().autoClearTime) {
-						int msgIndex = ClearConfig.ITEM_CLEAR.getDatas().autoClearTime - itemTime;
-						if (ClearConfig.ITEM_CLEAR.getDatas().msg.containsKey(msgIndex))
-							msg[1] = ClearConfig.ITEM_CLEAR.getDatas().msg.getOrDefault(msgIndex, "");
+				if (!clearItem && ClearConfig.ITEM_CLEAR.getData().enable() && ClearConfig.ITEM_CLEAR.getData().autoClearTime() > 0) {
+					if (itemTime < ClearConfig.ITEM_CLEAR.getData().autoClearTime()) {
+						int msgIndex = ClearConfig.ITEM_CLEAR.getData().autoClearTime() - itemTime;
+						if (ClearConfig.ITEM_CLEAR.getData().msg().containsKey(msgIndex))
+							msg[1] = ClearConfig.ITEM_CLEAR.getData().msg().getOrDefault(msgIndex, "");
 						itemTime++;
 					} else {
 						itemTime = 0;
 						clearItem = true;
 					}
 				}
-				if (!clearEntity && ClearConfig.ENTITY_CLEAR.getDatas().enable && ClearConfig.ENTITY_CLEAR.getDatas().autoClearTime > 0) {
-					if (time < ClearConfig.ENTITY_CLEAR.getDatas().autoClearTime) {
-						int msgIndex = ClearConfig.ENTITY_CLEAR.getDatas().autoClearTime - time;
-						if (ClearConfig.ENTITY_CLEAR.getDatas().msg.containsKey(msgIndex))
-							msg[0] = ClearConfig.ENTITY_CLEAR.getDatas().msg.getOrDefault(msgIndex, "");
+				if (!clearEntity && ClearConfig.ENTITY_CLEAR.getData().enable() && ClearConfig.ENTITY_CLEAR.getData().autoClearTime() > 0) {
+					if (time < ClearConfig.ENTITY_CLEAR.getData().autoClearTime()) {
+						int msgIndex = ClearConfig.ENTITY_CLEAR.getData().autoClearTime() - time;
+						if (ClearConfig.ENTITY_CLEAR.getData().msg().containsKey(msgIndex))
+							msg[0] = ClearConfig.ENTITY_CLEAR.getData().msg().getOrDefault(msgIndex, "");
 						time++;
 					} else {
 						time = 0;
@@ -79,13 +77,11 @@ public class TickEvent {
 			ThreadIsRun = true;
 			tt.start();
 		}
-		if (ListenConfig.I.getDatas().isEnable()) Listen.I.start();
 	}
 
 	@SubscribeEvent
 	public static void onStop(ServerStoppingEvent event) {
 		runThread = false;
-		Listen.I.close();
 	}
 
 	@SubscribeEvent
@@ -113,8 +109,8 @@ public class TickEvent {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer && LoginHelper.checkLogin(serverPlayer)) {
 			String uuid = serverPlayer.getStringUUID();
 			loginTime.put(uuid, loginTime.getOrDefault(uuid, 0) + 1);
-			if (loginTime.get(uuid) >= LoginConfig.INSTANCE.getDatas().time) {
-				serverPlayer.connection.disconnect(Language.getComponent("login.failed"));
+			if (loginTime.get(uuid) >= LoginConfig.INSTANCE.getData().time()) {
+				serverPlayer.connection.disconnect(Language.getComponent(serverPlayer,"login.failed"));
 				loginTime.remove(uuid);
 			}
 		}
@@ -125,7 +121,7 @@ public class TickEvent {
 	@SubscribeEvent
 	public static void onEntityTick(EntityTickEvent.Post event) {
 		if (event.getEntity().level().isClientSide()) return;
-		if (Config.I.getDatas().clearAnomalousEntity) {
+		if (Config.I.getData().clearAnomalousEntity) {
 			if (event.getEntity() instanceof LivingEntity livingEntity) {
 				if (livingEntity.getPose().equals(Pose.DYING)) {
 					if (livingEntity.deathTime > 20) {

@@ -55,5 +55,8 @@
   "get_server_info.command.listen.host": "地址",
   "get_server_info.command.listen.port": "端口",
   "get_server_info.command.listen.description": "描述",
-  "get_server_info.command.listen.version": "版本"
+  "get_server_info.command.listen.version": "版本",
+  "set_lang.command.success": "设置语言成功",
+  "set_lang.command.wainning": "此语言代码的语言未加载",
+  "set_lang.command.failed": "设置语言失败"
 }
