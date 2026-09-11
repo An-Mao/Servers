@@ -61,7 +61,7 @@ public class LoginMenu extends AbstractContainerMenu {
 		for (int row = 0; row < 6; row++) {
 			for (int col = 0; col < 9; col++) {
 				int slot = row * 9 + col;
-				this.addSlot(new SlotButton(itemHandler, itemHandler::set, slot, 8 + col * 18, 18 + row * 18, player -> input(itemHandler.getResource(slot).toStack())));
+				this.addSlot(new SlotButton<>(itemHandler, itemHandler::set, slot, 8 + col * 18, 18 + row * 18, player -> input(itemHandler.getResource(slot).toStack()),null));
 			}
 		}
 	}

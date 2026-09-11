@@ -1,6 +1,6 @@
 package dev.anye.mc.st.mixin;
 
-import dev.anye.mc.st.helper.BanItemHelper;
+import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ public class InventoryMixin {
 	@Inject(method = "add(ILnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	public void ns$add$check(int slot, ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
 
-		if (BanItemHelper.checkItemAndSend(itemStack, this.player.level().getServer())) {
+		if (BanItemConfig.I.checkItemAndSend(itemStack, this.player.level().getServer())) {
 			cir.setReturnValue(false);
 		}
 	}

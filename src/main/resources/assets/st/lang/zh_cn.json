@@ -58,5 +58,9 @@
   "get_server_info.command.listen.version": "版本",
   "set_lang.command.success": "设置语言成功",
   "set_lang.command.wainning": "此语言代码的语言未加载",
-  "set_lang.command.failed": "设置语言失败"
+  "set_lang.command.failed": "设置语言失败",
+
+
+  "sell.command.item.success":"上架物品成功",
+  "sell.command.item.failed":"上架物品失败"
 }

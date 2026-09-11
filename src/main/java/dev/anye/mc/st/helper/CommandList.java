@@ -46,6 +46,8 @@ public class CommandList {
 		commands.add(CommandData.create(CommandData.Permission_Player, CommandHelper::tpaDeny, "tpaDeny"));
 
 
+		commands.add(CommandData.create(CommandHelper::sellItem, root, "test", "sellItem"));
+		commands.add(CommandData.create(CommandHelper::shelf,root,"test","shelf"));
 	}
 
 	public void register() {

@@ -1,67 +1,43 @@
 package dev.anye.mc.st.menu;
 
-import dev.anye.mc.st.config.Language;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.transfer.item.ItemResource;
-import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class TrashBinContainer extends AbstractContainerMenu {
+public class TrashBinContainer extends PageMenu {
 	public static ServerPlayer nowPlayer = null;
-	public static final HashMap<Integer, ItemStack> SLOTS = new HashMap<>();
-	private final ItemStacksResourceHandler PREV_PAGE_ITEM = new ItemStacksResourceHandler(1);
-	private final ItemStacksResourceHandler HOME_PAGE_ITEM = new ItemStacksResourceHandler(1);
-	private final ItemStacksResourceHandler NEXT_PAGE_ITEM = new ItemStacksResourceHandler(1);
-	private final ItemStacksResourceHandler X = new ItemStacksResourceHandler(1);
-	private final ItemStacksResourceHandler itemHandler;
-	private int nowPage;
+	public static final Map<Integer, ItemStack> SLOTS = new HashMap<>();
 
 	public TrashBinContainer(int id, Inventory playerInventory) {
-		super(MenuType.GENERIC_9x6, id);
-		nowPage = 0;
-		this.itemHandler = new ItemStacksResourceHandler(45);
-		ItemStack itemStack = new ItemStack(Items.ARROW);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent((ServerPlayer) playerInventory.player,"trash.menu.button.previous_page"));
-		PREV_PAGE_ITEM.set(0, ItemResource.of(itemStack), 1);
-		itemStack = new ItemStack(Items.BOOK);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent((ServerPlayer) playerInventory.player,"trash.menu.button.home_page"));
-		HOME_PAGE_ITEM.set(0, ItemResource.of(itemStack), 1);
-		itemStack = new ItemStack(Items.ARROW);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent((ServerPlayer) playerInventory.player,"trash.menu.button.next_page"));
-		NEXT_PAGE_ITEM.set(0, ItemResource.of(itemStack), 1);
-		itemStack = new ItemStack(Items.BARRIER);
-		itemStack.set(DataComponents.CUSTOM_NAME, Language.getComponent((ServerPlayer) playerInventory.player,"trash.menu.button.tips"));
-		X.set(0, ItemResource.of(itemStack), 1);
-		loadItems();
-		setupSlots(playerInventory);
+		super(MenuType.GENERIC_9x6, id,playerInventory,getMaxPage(SLOTS.size(),45),45,false,45);
 	}
-
+/*
 	private void setupSlots(Inventory playerInventory) {
 		for (int row = 0; row < 5; row++) {
 			for (int col = 0; col < 9; col++) {
 				this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, row * 9 + col, 8 + col * 18, 18 + row * 18));
 			}
 		}
-		this.addSlot(new SlotButton(PREV_PAGE_ITEM, PREV_PAGE_ITEM::set, 0, 8, 142, player -> switchPage(-1)));
-		this.addSlot(new SlotButton(X, X::set, 0, 26, 142, null));
-		this.addSlot(new SlotButton(X, X::set, 0, 44, 142, null));
-		this.addSlot(new SlotButton(X, X::set, 0, 62, 142, null));
-		this.addSlot(new SlotButton(HOME_PAGE_ITEM, HOME_PAGE_ITEM::set, 0, 80, 142, player -> switchPageTo(0)));
-		this.addSlot(new SlotButton(X, X::set, 0, 98, 142, null));
-		this.addSlot(new SlotButton(X, X::set, 0, 116, 142, null));
-		this.addSlot(new SlotButton(X, X::set, 0, 134, 142, null));
-		this.addSlot(new SlotButton(NEXT_PAGE_ITEM, NEXT_PAGE_ITEM::set, 0, 152, 142, player -> switchPage(1)));
+		addPageButton();
+//		this.addSlot(prevButton(8, 142));
+//		this.addSlot(xButton(26, 142));
+//		this.addSlot(xButton(44, 142));
+//		this.addSlot(xButton(62, 142));
+//		this.addSlot(homeButton(80, 142));
+//		this.addSlot(xButton(98, 142));
+//		this.addSlot(xButton(116, 142));
+//		this.addSlot(xButton(134, 142));
+//		this.addSlot(nextButton(152, 142));
 
 		for (int row = 0; row < 3; row++) {
 			for (int col = 0; col < 9; col++) {
@@ -71,49 +47,45 @@ public class TrashBinContainer extends AbstractContainerMenu {
 		for (int col = 0; col < 9; col++) {
 			this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
 		}
+	}*/
+
+	@Override
+	public void addInventory() {
+		for (int i = 0; i < pageItemNumber; i++){
+			int ii = i;
+			this.addItemSlot(i,(x,y) -> new ResourceHandlerSlot(itemHandler, itemHandler::set, ii, x, y));
+		}
+		/*
+		for (int row = 0; row < 5; row++) {
+			for (int col = 0; col < 9; col++) {
+				int i = row * 9 + col;
+				this.addItemSlot(i,new ResourceHandlerSlot(itemHandler, itemHandler::set, row * 9 + col, 8 + col * 18, 18 + row * 18));
+			}
+		}
+
+		 */
 	}
 
-	private void switchPage(int offset) {
-		saveItems();
-		nowPage += offset;
-		int maxPage = (SLOTS.size() / 45) - 1;
-		if (SLOTS.size() % 45 != 0) maxPage++;
-		maxPage = Math.max(0, maxPage);
-		if (nowPage < 0) nowPage = maxPage;
-		if (nowPage > maxPage) nowPage = 0;
-		refreshPage();
-	}
-
-	private void switchPageTo(int page) {
-		saveItems();
-		nowPage = page;
-		refreshPage();
-	}
-
-	private void refreshPage() {
+	@Override
+	public void pageRefresh() {
 		int num = itemHandler.size();
-		int pageIndex = nowPage * 45;
+		int index = pageIndex * 45;
 		for (int i = 0; i < num; i++) {
-			ItemStack itemStack = SLOTS.getOrDefault(pageIndex + i, ItemStack.EMPTY);
+			ItemStack itemStack = SLOTS.getOrDefault(index + i, ItemStack.EMPTY);
 			itemHandler.set(i, ItemResource.of(itemStack), itemStack.getCount());
 		}
 	}
-
-	private void loadItems() {
-		refreshPage();
-	}
-
 	public void saveItems() {
-		int pageIndex = nowPage * 45;
+		int index = pageIndex * 45;
 		for (int i = 0; i < 45; i++) {
 			//ItemStack stack = itemHandler.getStackInSlot(i);
 			//System.out.println(i+ " stack::"+stack);
-			SLOTS.put(pageIndex + i, itemHandler.getResource(i).toStack(itemHandler.getAmountAsInt(i)));
+			SLOTS.put(index + i, itemHandler.getResource(i).toStack(itemHandler.getAmountAsInt(i)));
 		}
 	}
 
 	@Override
-	public boolean stillValid(Player player) {
+	public boolean stillValid(@NonNull Player player) {
 		return true;
 	}
 
@@ -146,9 +118,10 @@ public class TrashBinContainer extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void removed(Player player) {
+	public void removed(@NonNull Player player) {
 		super.removed(player);
 		saveItems();
 		nowPlayer = null;
 	}
+
 }

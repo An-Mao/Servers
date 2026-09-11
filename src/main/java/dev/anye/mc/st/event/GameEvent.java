@@ -3,24 +3,32 @@ package dev.anye.mc.st.event;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.mc.st.ST;
+import dev.anye.mc.st.config.Config;
 import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import dev.anye.mc.st.config.black_list.BlackListConfig;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.command.CommandConfig;
 import dev.anye.mc.st.config.login.LoginConfig;
 import dev.anye.mc.st.config.msg.MsgConfig;
 import dev.anye.mc.st.config.player_data.PlayerConfig;
-import dev.anye.mc.st.helper.*;
+import dev.anye.mc.st.helper.CommandHelper;
+import dev.anye.mc.st.helper.CommandList;
+import dev.anye.mc.st.helper.LoginHelper;
+import dev.anye.mc.st.sys.EnchantmentExtract;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.TriState;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.AnvilCraftEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -39,7 +47,7 @@ public class GameEvent {
 
 	@SubscribeEvent
 	public static void onPickup(ItemEntityPickupEvent.Pre event) {
-		if (!event.getItemEntity().level().isClientSide() && BanItemHelper.checkItemAndSend(event.getItemEntity())) {
+		if (!event.getItemEntity().level().isClientSide() && BanItemConfig.I.checkItemAndSend(event.getItemEntity())) {
 			event.getItemEntity().discard();
 			event.setCanPickup(TriState.FALSE);
 		}
@@ -75,10 +83,11 @@ public class GameEvent {
 	@SubscribeEvent
 	public static void onJoin(EntityJoinLevelEvent event) {
 		if (event.getEntity().level().isClientSide()) return;
-		if (BanItemHelper.checkItemAndSend(event.getEntity())) {
+		if (event.getEntity() instanceof ItemEntity itemEntity && BanItemConfig.I.checkItemAndSend(itemEntity)) {
 			event.setCanceled(true);
 			return;
 		}
+
 		if (WAIT > 0) {
 			WAIT--;
 			return;
@@ -140,7 +149,7 @@ public class GameEvent {
 	}
 
 	@SubscribeEvent
-	public static void onInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+	public static void onInteractSpecific(PlayerInteractEvent.EntityInteract event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
 			if (LoginHelper.checkLogin(serverPlayer)) {
 				event.setCanceled(true);
@@ -175,6 +184,54 @@ public class GameEvent {
 	public static void onInteraction(PlayerInteractEvent.LeftClickEmpty event) {
 		if (LoginHelper.checkLogin((ServerPlayer) event.getEntity())) {
 			//event.setCanceled(true);
+		}
+	}
+	@SubscribeEvent
+	public static void onAnvil(AnvilUpdateEvent event){
+		if (event.getPlayer() instanceof ServerPlayer) {
+			Config.I.ifPresent(configData -> {
+				if (configData.enchantmentExtract) {
+					EnchantmentExtract.onUpdate(event, event.getLeft(), event.getRight());
+				}
+/*
+				ItemStack left = event.getLeft();
+				CustomData data = left.get(DataComponents.CUSTOM_DATA);
+				CompoundTag tag = data != null ? data.copyTag() : new CompoundTag();
+				if (tag.contains("isEnchantmentExtract")) tag.remove("isEnchantmentExtract");
+				ItemStack right = event.getRight();
+				if (left.isEmpty() || left.is(Items.ENCHANTED_BOOK) || right.isEmpty() || !right.is(Items.BOOK)) return;
+				ItemEnchantments enchantments = left.getTagEnchantments();
+				if (enchantments.isEmpty()) return;
+				ItemStack out = new ItemStack(Items.ENCHANTED_BOOK);
+				insertFlag(event.getLeft());
+
+				CustomData data = left.get(DataComponents.CUSTOM_DATA);
+				System.out.println(data.copyTag());
+				out.set(DataComponents.STORED_ENCHANTMENTS,enchantments);
+				//left.set(DataComponents.ENCHANTMENTS,ItemEnchantments.EMPTY);
+				//right.shrink(1);
+				event.setOutput(out);
+				event.setMaterialCost(1);
+				int[] c = {0};
+				enchantments.keySet().forEach(enchantmentHolder -> {
+					c[0] += enchantmentHolder.value().getAnvilCost() * enchantments.getLevel(enchantmentHolder);
+				});
+				event.setXpCost(c[0]);*/
+
+			});
+		}
+	}
+
+
+
+	//@SubscribeEvent
+	public static void onAnvil(AnvilCraftEvent.Post event){
+		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+			Config.I.ifPresent(configData -> {
+				if (configData.enchantmentExtract) {
+					EnchantmentExtract.onTake(serverPlayer, event.getLeft(), event.getRight());
+				}
+			});
 		}
 	}
 }

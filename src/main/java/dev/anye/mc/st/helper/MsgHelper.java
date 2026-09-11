@@ -3,7 +3,6 @@ package dev.anye.mc.st.helper;
 import dev.anye.core.format._FormatToString;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
-import dev.anye.mc.st.config.Language;
 import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.js.CJS;
 import dev.anye.mc.st.js._JavaScript;

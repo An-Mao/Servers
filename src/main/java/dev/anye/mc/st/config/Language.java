@@ -101,6 +101,9 @@ public class Language extends _JsonConfig<Map<String, String>> {
 		map.put("set_lang.command.success", "set language success");
 		map.put("set_lang.command.failed", "set language failed");
 		map.put("set_lang.command.wainning","the code language not load");
+
+		map.put("sell.command.item.success","sell item success");
+		map.put("sell.command.item.failed","sell item failed");
 		return map;
 	}
 
@@ -108,7 +111,7 @@ public class Language extends _JsonConfig<Map<String, String>> {
 
 
 	public static String getLanguage() {
-		String lang = Config.I.map(configData -> configData.lang).orElse("");
+		String lang = Config.I.read(configData -> configData.lang,"");
 		if (lang.isBlank() || lang.equals("auto")) {
 			Locale defaultLocale = Locale.getDefault();
 			lang = defaultLocale.getLanguage() + "_" + defaultLocale.getCountry();
@@ -135,7 +138,7 @@ public class Language extends _JsonConfig<Map<String, String>> {
 	public static String translatable(String lang,String key,String def,Object... value){
 		if (lang.isBlank()) lang = "en_us";
 		Language language = LANG.getOrDefault(lang + _SuffixCDT.JSON_SUFFIX,DEFAULT_LANG);
-		String msg = language.map(map -> map.get(key)).orElse(DEFAULT_LANG.map(m -> m.get(key)).orElse(def));
+		String msg = language.read(map -> map.get(key),DEFAULT_LANG.read(m -> m.get(key),def));
 		return MessageFormat.format(msg,value);
 	}
 

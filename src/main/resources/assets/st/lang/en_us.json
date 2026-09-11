@@ -58,5 +58,8 @@
   "get_server_info.command.listen.version": "version",
   "set_lang.command.success": "set language success",
   "set_lang.command.wainning": "the code language not load",
-  "set_lang.command.failed": "set language failed"
+  "set_lang.command.failed": "set language failed",
+
+  "sell.command.item.success":"sell item success",
+  "sell.command.item.failed":"sell item failed"
 }

@@ -1,6 +1,6 @@
 package dev.anye.mc.st.mixin;
 
-import dev.anye.mc.st.helper.BanItemHelper;
+import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ public class ItemStackMixin {
 	@ModifyVariable(method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("HEAD"), argsOnly = true,
 			ordinal = 0)
 	private static Holder<Item> ns$init$check(Holder<Item> item) {
-		if (BanItemHelper.checkItemAndSend(item.value(), ServerLifecycleHooks.getCurrentServer())) {
+		if (BanItemConfig.I.checkItemAndSend(item.value(), ServerLifecycleHooks.getCurrentServer())) {
 			item = Holder.direct(Items.STONE);
 		}
 		return item;

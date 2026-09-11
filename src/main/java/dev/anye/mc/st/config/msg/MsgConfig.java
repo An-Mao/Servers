@@ -2,6 +2,7 @@ package dev.anye.mc.st.config.msg;
 
 import com.google.gson.reflect.TypeToken;
 import dev.anye.core.json._JsonConfig;
+import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.helper.MsgHelper;
@@ -21,27 +22,27 @@ public class MsgConfig {
 	public static final EveryDayJoin EVERY_DAY_JOIN = new EveryDayJoin();
 	public static final EveryJoin EVERY_JOIN = new EveryJoin();
 	private MsgConfig(){}
-	public static class FirstJoin extends _JsonConfig<MsgConfigData> {
+	public static class FirstJoin extends _JsonConfigS<MsgConfigData> {
 		public final FirstLog firstLog = new FirstLog();
 		public FirstJoin() {
 			super(FIRST_JOIN_FILE, MsgConfigData.FIRST_JOIN_DEFAULT, new TypeToken<>() {});
 		}
 
 		public void send(ServerPlayer serverPlayer) {
-			ifPresent(msgConfigData -> {
+			read(msgConfigData -> {
 				if (msgConfigData.enable()) {
-					firstLog.ifPresent(log ->{
+					firstLog.update(log ->{
 						if (log.contains(serverPlayer.getStringUUID())) return;
 						MsgHelper.sendMsgToPlayerF(serverPlayer, msgConfigData.msg());
 						log.add(serverPlayer.getStringUUID());
-						firstLog.save();
 					});
+					firstLog.saveIfDirtyAsync();
 				}
 			});
 		}
 	}
 
-	public static class EveryDayJoin extends _JsonConfig<MsgConfigData> {
+	public static class EveryDayJoin extends _JsonConfigS<MsgConfigData> {
 		private static String today = getDay();
 		public final DayLog dayLog = new DayLog();
 
@@ -50,9 +51,9 @@ public class MsgConfig {
 		}
 
 		public void send(ServerPlayer serverPlayer) {
-			ifPresent(msgConfigData -> {
+			read(msgConfigData -> {
 				if (msgConfigData.enable()){
-					dayLog.ifPresent(stringListHashMap -> {
+					dayLog.update(stringListHashMap -> {
 						List<String> list = stringListHashMap.getOrDefault(today, new ArrayList<>());
 
 						if (today.equals(getDay())) {
@@ -68,8 +69,8 @@ public class MsgConfig {
 						}
 						list.add(serverPlayer.getStringUUID());
 						stringListHashMap.put(today, list);
-						dayLog.save();
 					});
+					dayLog.save();
 				}
 			});
 		}
@@ -79,28 +80,28 @@ public class MsgConfig {
 		}
 	}
 
-	public static class EveryJoin extends _JsonConfig<MsgConfigData> {
+	public static class EveryJoin extends _JsonConfigS<MsgConfigData> {
 		public EveryJoin() {
 			super(EVERY_JOIN_FILE, MsgConfigData.EVERY_JOIN_DEFAULT, new TypeToken<>() {
 			});
 		}
 
 		public void send(ServerPlayer serverPlayer) {
-			ifPresent(msgConfigData -> {
+			read(msgConfigData -> {
 				if (msgConfigData.enable()) MsgHelper.sendMsgToPlayerF(serverPlayer, msgConfigData.msg());
 			});
 		}
 	}
 
 
-	public static class FirstLog extends _JsonConfig<List<String>> {
+	public static class FirstLog extends _JsonConfigS<List<String>> {
 		private static final String FILE = _File.getFilePath(ConfigDir.MSG, "FirstLog.json");
 		public FirstLog() {
 			super(FILE, new ArrayList<>(), new TypeToken<>(){});
 		}
 	}
 
-	public static class DayLog extends _JsonConfig<Map<String, List<String>>> {
+	public static class DayLog extends _JsonConfigS<Map<String, List<String>>> {
 		private static final String FILE = _File.getFilePath(ConfigDir.MSG, "DayLog.json");
 
 		public DayLog() {

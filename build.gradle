@@ -38,6 +38,14 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
+//minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+
+minecraft {
+    accessTransformers {
+        file 'src/main/resources/META-INF/accesstransformer.cfg'
+    }
+}
+
 configurations {
     libraries
     implementation.extendsFrom libraries

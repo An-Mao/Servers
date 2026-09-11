@@ -2,7 +2,7 @@ package dev.anye.mc.st.config.player_data;
 
 import com.google.gson.reflect.TypeToken;
 import dev.anye.core.cdt._SuffixCDT;
-import dev.anye.core.json._JsonConfig;
+import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.config.Language;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PlayerConfig extends _JsonConfig<PlayerData> {
+public class PlayerConfig extends _JsonConfigS<PlayerData> {
 	//public static final Map<String, PlayerConfig> I = loadPlayerData();
 	public PlayerConfig(String filePath) {
 		super(filePath, new PlayerData(), new TypeToken<>() {});
@@ -42,7 +42,7 @@ public class PlayerConfig extends _JsonConfig<PlayerData> {
 
 	public static PlayerConfig get(String uuid) {
 		return new PlayerConfig(_File.getFilePath(ConfigDir.PLAYER_DATA, uuid + _SuffixCDT.JSON_SUFFIX));
-		//return I.getOrDefault(uuid, new PlayerConfig(_File.getFilePath(ConfigDir.PLAYER_DATA, uuid + ".json")));
+		//return I.getOrDefault(playerUUID, new PlayerConfig(_File.getFilePath(ConfigDir.PLAYER_DATA, playerUUID + ".json")));
 	}
 
 
@@ -50,14 +50,16 @@ public class PlayerConfig extends _JsonConfig<PlayerData> {
 		sendMessage(serverPlayer,raw,raw,value);
 	}
 	public void sendMessage(ServerPlayer serverPlayer,String raw,String def,Object... value){
-		ifPresent(playerData -> MsgHelper.sendMsgToPlayer(serverPlayer, Language.translatable(playerData.lang(),raw,def,value)));
+		read(playerData ->{
+			MsgHelper.sendMsgToPlayer(serverPlayer, Language.translatable(playerData.lang(),raw,def,value));
+		});
 	}
 
 	public void sendFormatMessage(ServerPlayer serverPlayer,String raw,Map<String,String> format,Object... value){
 		sendMessage(serverPlayer,raw,raw,format,value);
 	}
 	public void sendFormatMessage(ServerPlayer serverPlayer,String raw,String def,Map<String,String> format,Object... value){
-		ifPresent(playerData -> {
+		read(playerData -> {
 			AtomicReference<String> msg = new AtomicReference<>(Language.translatable(playerData.lang(), raw, def, value));
 			format.forEach((s, s2) -> msg.set(msg.get().replace(s, s2)));
 			MsgHelper.sendMsgToPlayer(serverPlayer, msg.get());
@@ -65,12 +67,12 @@ public class PlayerConfig extends _JsonConfig<PlayerData> {
 	}
 
 	public String lang(){
-		return map(PlayerData::lang).orElse("en_us");
+		return read(PlayerData::lang,"en_us");
 	}
 
 
 	public void setLang(String lang){
-		ifPresent(playerData -> playerData.setLang(lang));
+		update(playerData -> playerData.setLang(lang));
 		save();
 	}
 
@@ -78,13 +80,16 @@ public class PlayerConfig extends _JsonConfig<PlayerData> {
 	}
 
 	public @Nullable PosData getBack() {
-		List<PosData> backs = getData().backs;
-		if (backs == null || backs.isEmpty()) return null;
-		PosData pd = backs.getLast().copy();
-		backs.removeLast();
-		getData().backs = backs;
+		AtomicReference<PosData> pd = new AtomicReference<>(null);
+		update(playerData -> {
+			List<PosData> backs = playerData.backs;
+			if (backs == null || backs.isEmpty()) return;
+			pd.set(backs.getLast().copy());
+			backs.removeLast();
+			playerData.backs = backs;
+		});
 		save();
-		return pd;
+		return pd.get();
 	}
 
 	public void addBack(ServerPlayer serverPlayer) {
@@ -92,12 +97,12 @@ public class PlayerConfig extends _JsonConfig<PlayerData> {
 	}
 
 	public void addBack(PosData pd) {
-		getData().addBack(pd);
+		update(playerData -> playerData.addBack(pd));
 		save();
 	}
 
 	public void setHome(PosData posData) {
-		getData().home = posData;
+		update(playerData -> playerData.home = posData);
 		save();
 	}
 }

@@ -29,14 +29,15 @@ public class ClearHelper {
 
 
 	public static void clearServerEntity(MinecraftServer server) {
-		ClearConfig.ENTITY_CLEAR.ifPresent(entityClearData -> {
+
+		ClearConfig.ENTITY_CLEAR.read(entityClearData -> {
 			ClearList clearList = new ClearList(entityClearData);
 			server.getAllLevels().forEach(serverLevel -> {
 				clearLevelEntity(serverLevel, clearList);
 				if (entityClearData.clearXp())
 					serverLevel.getEntities(EntityTypeTest.forClass(ExperienceOrb.class), experienceOrb -> true).forEach(clearList::add);
 			});
-			MsgHelper.sendServerMsg(server, ClearConfig.ENTITY_CLEAR.getMsg(0), pullClearCount(clearList.clearEntity()));
+			MsgHelper.sendServerMsg(server, ClearConfig.EntityClear.getMsg(entityClearData,0), pullClearCount(clearList.clearEntity()));
 		});
 	}
 

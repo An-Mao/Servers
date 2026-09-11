@@ -2,8 +2,11 @@ package dev.anye.mc.st.config.login_reward;
 
 import com.google.gson.reflect.TypeToken;
 import dev.anye.core.json._JsonConfig;
+import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
+import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.ConfigDir;
+import dev.anye.mc.st.helper.ItemHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -12,7 +15,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.*;
 
-public class LoginReward extends _JsonConfig<LoginRewardData> {
+public class LoginReward extends _JsonConfigS<LoginRewardData> {
 	private static final String FILE = _File.getFilePath(ConfigDir.LOGIN, "LoginReward.json");
 	public static final LoginReward I = new LoginReward();
 	public static final LoginData LOGIN_DATA = new LoginData(_File.getFilePath(ConfigDir.LOGIN, "LoginData.json"));
@@ -26,62 +29,56 @@ public class LoginReward extends _JsonConfig<LoginRewardData> {
 
 
 
-	public List<String> getDayRewardList() {
-		if (this.data.isPresent()){
-			return this.data.get().dayRewardList();
-		}
-		return new ArrayList<>();
+	public List<String> getDayRewardList(LoginRewardData loginRewardData) {
+		return loginRewardData.dayRewardList();
 	}
 
 	public List<ItemStack> getDayReward(String uuid) {
-		if (this.data.isPresent()) {
-			List<String> list = getDayRewardList();
+		return read(loginRewardData -> {
+			if (loginRewardData.enable()) {
+				List<String> list = getDayRewardList(loginRewardData);
+				if (list.isEmpty()) return new ArrayList<>();
 
-
-			List<ItemStack> itemStacks = new ArrayList<>();
-			if (list.isEmpty()) return itemStacks;
-			int index = PLAYER_LOGIN_DATA.getLastLoginIndex(uuid) + 1;
-
-			if (index >= list.size()) {
-				if (this.data.get().recurrent()) {
-					index = 0;
-				} else {
-					return itemStacks;
+				List<ItemStack> itemStacks = new ArrayList<>();
+				int index = PLAYER_LOGIN_DATA.getLastLoginIndex(uuid) + 1;
+				if (index >= list.size()) {
+					if (loginRewardData.recurrent()) {
+						index = 0;
+					} else {
+						return itemStacks;
+					}
 				}
+				PLAYER_LOGIN_DATA.setLastLoginIndex(uuid, index);
+				itemStacks.add(new ItemStack(ItemHelper.getItem(list.get(index))));
+				getAppointedDayRewardList(loginRewardData,itemStacks);
+				/*
+				if (getAppointedDayRewardList().containsKey(getDayCheck())) {
+					itemStacks.add(new ItemStack(getItem(getAppointedDayRewardList().get(getDayCheck()))));
+				}*/
+				return itemStacks;
 			}
-			PLAYER_LOGIN_DATA.setLastLoginIndex(uuid, index);
-			itemStacks.add(new ItemStack(getItem(list.get(index))));
-			if (getAppointedDayRewardList().containsKey(getDayCheck())) {
-				itemStacks.add(new ItemStack(getItem(getAppointedDayRewardList().get(getDayCheck()))));
-			}
-			return itemStacks;
+			return new ArrayList<>();
+		},new ArrayList<>());
+	}
+
+	public void getAppointedDayRewardList(LoginRewardData loginRewardData,final List<ItemStack> itemStacks) {
+		if (loginRewardData.appointedDayRewardList().containsKey(getDayCheck())) {
+			itemStacks.add(new ItemStack(ItemHelper.getItem(loginRewardData.appointedDayRewardList().get(getDayCheck()))));
 		}
-		return new ArrayList<>();
 	}
 
-	public Map<String, String> getAppointedDayRewardList() {
-		if (data.isPresent()){
-			return data.get().appointedDayRewardList();
-		}
-		return new HashMap<>();
-	}
-
-	public static Item getItem(String name) {
-		return BuiltInRegistries.ITEM.get(Identifier.tryParse(name)).get().value();
-	}
-
-	public static class LoginData extends _JsonConfig<Map<String, List<String>>> {
+	public static class LoginData extends _JsonConfigS<Map<String, List<String>>> {
 		public LoginData(String file) {
 			super(file, new HashMap<>(), new TypeToken<>() {});
 		}
 
 
 		public void clear(){
-			ifPresent(Map::clear);
+			update(Map::clear);
 		}
 
 		public void addData(String key, String... value) {
-			ifPresent(stringListMap -> {
+			read(stringListMap -> {
 				if (!stringListMap.containsKey(key)) {
 					stringListMap.put(key,List.of(value));
 				} else {
@@ -89,14 +86,14 @@ public class LoginReward extends _JsonConfig<LoginRewardData> {
 					list.addAll(Arrays.asList(value));
 					stringListMap.put(key, list);
 				}
-				save();
 			});
+			saveIfDirtyAsync();
 		}
 	}
 
 	public static String getDay() {
-
-		return DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd");
+		return ST.FAST_DATE_TIME.update().toDateString("");
+		// DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd");
 	}
 
 	public static String getDayCheck() {
@@ -110,35 +107,35 @@ public class LoginReward extends _JsonConfig<LoginRewardData> {
 		return day;
 	}
 
-	public static class PlayerLoginDataConfig extends _JsonConfig<Map<String, PlayerLoginData>> {
+	public static class PlayerLoginDataConfig extends _JsonConfigS<Map<String, PlayerLoginData>> {
 		public PlayerLoginDataConfig(String filePath) {
 			super(filePath, new HashMap<>(), new TypeToken<>() {});
 		}
 
 		public int getLoginCount(String uuid) {
 			checkData(uuid);
-			return data.map(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).loginCount).orElse(-1);
+			return read(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).loginCount,-1);
 		}
 
 		public void setLoginCount(String uuid) {
 			checkData(uuid);
-			data.ifPresent(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).loginCount++);
+			update(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).loginCount++);
 			save();
 		}
 
 		public int getLastLoginIndex(String uuid) {
 			checkData(uuid);
-			return data.map(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).lastLoginIndex).orElse(-1);
+			return read(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).lastLoginIndex,-1);
 		}
 
 		public void setLastLoginIndex(String uuid, int index) {
 			checkData(uuid);
-			data.ifPresent(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).lastLoginIndex = index);
+			update(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).lastLoginIndex = index);
 			save();
 		}
 
 		public void checkData(String uuid) {
-			ifPresent(stringPlayerLoginDataMap -> {
+			read(stringPlayerLoginDataMap -> {
 				if (!stringPlayerLoginDataMap.containsKey(uuid)) stringPlayerLoginDataMap.put(uuid,new PlayerLoginData());
 			});
 		}

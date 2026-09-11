@@ -23,29 +23,17 @@ version = "${mod_version}" #mandatory
 # A display name for the mod
 displayName = "${mod_name}" #mandatory
 
-# A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 
-# A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
-
-# A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
-
-# A text field displayed in the mod UI
+displayURL="https://anye.dev"
+issueTrackerURL="https://github.com/An-Mao/Servers/issues"
+iconFile="anye_icon.png"
+bannerFile="anye_banner.png"
 #credits="" #optional
-
-# The authors of the mod, displayed in the mod UI (optional)
-#authors=""
-
-# The description text for the mod (multi line!) (#mandatory)
-description = '''
-Example mod description.
-'''
-
-# The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
-#[[mixins]]
-#config="${mod_id}.mixins.json"
+authors="[AnYe]AnMao(s)"
+description="""
+Website:https://anye.dev
+GitHub:https://github.com/An-Mao/Servers
+"""
 
 [[mixins]]
 config = "mixins.${mod_id}.json"
@@ -54,6 +42,8 @@ config = "mixins.${mod_id}.json"
 #[[accessTransformers]]
 #file="META-INF/accesstransformer.cfg"
 
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
 # The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.

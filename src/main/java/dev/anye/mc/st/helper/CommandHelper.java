@@ -10,13 +10,14 @@ import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.command.CommandConfig;
 import dev.anye.mc.st.config.login_reward.LoginReward;
 import dev.anye.mc.st.config.msg.MsgConfig;
-import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.config.player$group.PlayerGroupConfig;
+import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.data_type.PosData;
+import dev.anye.mc.st.menu.ItemShelfMenu;
 import dev.anye.mc.st.menu.LoginMenu;
 import dev.anye.mc.st.menu.TrashBinContainer;
+import dev.anye.mc.st.sys.Currency;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Relative;
@@ -254,18 +255,18 @@ public class CommandHelper {
 	}
 
 	public static int tpaDeny(CommandContext<CommandSourceStack> context) {
-		if (CommandConfig.I.getData().tpaDeny()) {
-			ServerPlayer player = context.getSource().getPlayer();
-			if (player != null) {
-				if (tpaQueue.containsKey(player.getStringUUID())) {
+		return CommandConfig.I.map(commandData -> {
+			if (commandData.tpaDeny()){
+				ServerPlayer player = context.getSource().getPlayer();
+				if (player != null && tpaQueue.containsKey(player.getStringUUID())) {
 					tpaQueue.remove(player.getStringUUID());
-					sendSuccess(context,"command.tpa_deny.success");
+					sendSuccess(context, "command.tpa_deny.success");
 					return SUCCESS;
 				}
 			}
-		}
-		sendFailure(context,"command.tpa_deny.failed");
-		return FAILED;
+			sendFailure(context,"command.tpa_deny.failed");
+			return FAILED;
+		}).orElse(FAILED);
 	}
 
 
@@ -274,5 +275,28 @@ public class CommandHelper {
 	}
 	public static void sendFailure(CommandContext<CommandSourceStack> context, String msg){
 		context.getSource().sendFailure(Language.getComponent(context.getSource().getPlayer(),msg));
+	}
+
+	public static int sellItem(CommandContext<CommandSourceStack> context) {
+		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
+			if (Currency.I.sell(serverPlayer,serverPlayer.getMainHandItem(),10D)){
+				sendSuccess(context,"sell.command.item.success");
+				return SUCCESS;
+			}
+			sendSuccess(context,"sell.command.item.failed");
+		}
+		return FAILED;
+	}
+
+	public static int shelf(CommandContext<CommandSourceStack> context) {
+		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
+
+			serverPlayer.openMenu(new SimpleMenuProvider(
+					(id, playerInventory, _) -> new ItemShelfMenu(id, playerInventory),
+					Language.getComponent(serverPlayer,"trash.menu.title")
+			));
+			return SUCCESS;
+		}
+		return FAILED;
 	}
 }

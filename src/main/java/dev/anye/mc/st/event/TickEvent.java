@@ -24,82 +24,19 @@ import java.util.HashMap;
 
 @EventBusSubscriber(modid = ST.MOD_ID)
 public class TickEvent {
-	private static boolean runThread = false;
-	private static int time = 0;
-	private static int itemTime = 0;
-	private static boolean clearEntity = false;
-	private static boolean clearItem = false;
-	private static final String[] msg = {"", ""};
-
-	private static final Thread tt = new Thread(() -> {
-		while (runThread) {
-			try {
-				if (!clearItem && ClearConfig.ITEM_CLEAR.getData().enable() && ClearConfig.ITEM_CLEAR.getData().autoClearTime() > 0) {
-					if (itemTime < ClearConfig.ITEM_CLEAR.getData().autoClearTime()) {
-						int msgIndex = ClearConfig.ITEM_CLEAR.getData().autoClearTime() - itemTime;
-						if (ClearConfig.ITEM_CLEAR.getData().msg().containsKey(msgIndex))
-							msg[1] = ClearConfig.ITEM_CLEAR.getData().msg().getOrDefault(msgIndex, "");
-						itemTime++;
-					} else {
-						itemTime = 0;
-						clearItem = true;
-					}
-				}
-				if (!clearEntity && ClearConfig.ENTITY_CLEAR.getData().enable() && ClearConfig.ENTITY_CLEAR.getData().autoClearTime() > 0) {
-					if (time < ClearConfig.ENTITY_CLEAR.getData().autoClearTime()) {
-						int msgIndex = ClearConfig.ENTITY_CLEAR.getData().autoClearTime() - time;
-						if (ClearConfig.ENTITY_CLEAR.getData().msg().containsKey(msgIndex))
-							msg[0] = ClearConfig.ENTITY_CLEAR.getData().msg().getOrDefault(msgIndex, "");
-						time++;
-					} else {
-						time = 0;
-						clearEntity = true;
-					}
-				}
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		time = 0;
-		itemTime = 0;
-		clearEntity = false;
-		clearItem = false;
-		msg[0] = "";
-		msg[1] = "";
-	});
-	private static boolean ThreadIsRun = false;
-
 	@SubscribeEvent
 	public static void onStart(ServerStartedEvent event) {
-		runThread = true;
-		if (!ThreadIsRun) {
-			ThreadIsRun = true;
-			tt.start();
-		}
+		ClearConfig.start();
 	}
 
 	@SubscribeEvent
 	public static void onStop(ServerStoppingEvent event) {
-		runThread = false;
+		ClearConfig.stop();
 	}
 
 	@SubscribeEvent
 	public static void onTick(ServerTickEvent.Pre event) {
-		if (clearEntity) {
-			ClearHelper.clearServerEntity(event.getServer());
-			clearEntity = false;
-		}
-		if (clearItem) {
-			ClearHelper.clearItem(event.getServer());
-			clearItem = false;
-		}
-		for (int i = 0; i < 2; i++) {
-			if (!msg[i].isEmpty()) {
-				MsgHelper.sendServerMsg(event.getServer(), msg[i]);
-				msg[i] = "";
-			}
-		}
+		ClearConfig.tick(event.getServer());
 	}
 
 	private static final HashMap<String, Integer> loginTime = new HashMap<>();
