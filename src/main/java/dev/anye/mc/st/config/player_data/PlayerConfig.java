@@ -25,7 +25,7 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 
 
 	public static Map<String, PlayerConfig> loadPlayerData() {
-		HashMap<String, PlayerConfig> abc = new HashMap<>();
+		Map<String, PlayerConfig> abc = new HashMap<>();
 		List<Path> jsonFiles = _File.getFiles(ConfigDir.PLAYER_DATA, _SuffixCDT.JSON_SUFFIX);
 		for (Path path : jsonFiles) {
 			String fileName = path.getFileName().toString();
@@ -49,14 +49,12 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 	public void sendMessage(ServerPlayer serverPlayer,String raw,Object... value){
 		sendMessage(serverPlayer,raw,raw,value);
 	}
-	public void sendMessage(ServerPlayer serverPlayer,String raw,String def,Object... value){
-		read(playerData ->{
-			MsgHelper.sendMsgToPlayer(serverPlayer, Language.translatable(playerData.lang(),raw,def,value));
-		});
+	public void sendMessage(ServerPlayer serverPlayer,String raw,String def,Object... value) {
+		MsgHelper.sendMsgToPlayer(serverPlayer, Language.translatable(read(PlayerData::lang,""), raw, def, value));
 	}
 
 	public void sendFormatMessage(ServerPlayer serverPlayer,String raw,Map<String,String> format,Object... value){
-		sendMessage(serverPlayer,raw,raw,format,value);
+		sendFormatMessage(serverPlayer,raw,raw,format,value);
 	}
 	public void sendFormatMessage(ServerPlayer serverPlayer,String raw,String def,Map<String,String> format,Object... value){
 		read(playerData -> {

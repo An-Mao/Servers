@@ -1,15 +1,14 @@
 package dev.anye.mc.st.config.currency;
 
 import com.google.gson.reflect.TypeToken;
-import dev.anye.core.json._JsonConfig;
 import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
 
-import java.util.function.Consumer;
-
 public class CurrencyConfig extends _JsonConfigS<CurrencyConfig.Data> {
 	public static final String FILE = _File.getFilePath(ConfigDir.BASE,"currency.json");
+
+
 	public CurrencyConfig() {
 		super(FILE, new Data(), new TypeToken<>(){});
 	}

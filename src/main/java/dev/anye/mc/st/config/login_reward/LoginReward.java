@@ -89,6 +89,16 @@ public class LoginReward extends _JsonConfigS<LoginRewardData> {
 			});
 			saveIfDirtyAsync();
 		}
+
+		public boolean gived(String uuid,final List<String> list) {
+			return read(map -> {
+				if (map.containsKey(LoginReward.getDayCheck())) {
+					list.addAll(map.get(LoginReward.getDayCheck()));
+					return !list.contains(uuid);
+				}
+				return true;
+			},false);
+		}
 	}
 
 	public static String getDay() {

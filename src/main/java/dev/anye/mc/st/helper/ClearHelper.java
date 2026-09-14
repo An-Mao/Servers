@@ -1,6 +1,7 @@
 package dev.anye.mc.st.helper;
 
 import dev.anye.mc.st.config.clear.ClearConfig;
+import dev.anye.mc.st.config.clear.ItemClearData;
 import dev.anye.mc.st.data_type.ClearList;
 import dev.anye.mc.st.menu.TrashBinContainer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,26 +44,26 @@ public class ClearHelper {
 
 	public static ClearList clearLevelEntity(ServerLevel serverLevel, @NotNull ClearList clearList) {
 		if (serverLevel != null) {
-			serverLevel.getEntities(EntityTypeTest.forClass(LivingEntity.class), livingEntity -> true).forEach(livingEntity -> {
-				if (!(livingEntity instanceof ServerPlayer)) {
-					if (ClearConfig.ENTITY_CLEAR.getData().whiteList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType()).toString()))
-						return;
-					if (ClearConfig.ENTITY_CLEAR.getData().blackList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType()).toString())) {
+			ClearConfig.ENTITY_CLEAR.read(entityClearData -> {
+				serverLevel.getEntities(EntityTypeTest.forClass(LivingEntity.class), livingEntity -> true).forEach(livingEntity -> {
+					if (!(livingEntity instanceof ServerPlayer)) {
+						if (entityClearData.whiteList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType()).toString()))
+							return;
+						if (entityClearData.blackList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType()).toString())) {
+							clearList.add(livingEntity);
+							return;
+						}
+						if (serverLevel.getNearestPlayer(livingEntity, entityClearData.safeDistance()) != null)
+							return;
+						if (livingEntity.getCustomName() != null && !entityClearData.clearName()) return;
+						if (livingEntity.getType().getCategory().equals(MobCategory.MONSTER) && !entityClearData.clearMob()) return;
+						else if (livingEntity instanceof Npc && !entityClearData.clearNpc()) return;
+						else if (livingEntity instanceof Animal && !entityClearData.clearAnimal()) return;
+						else if (livingEntity instanceof TamableAnimal tamableAnimal && tamableAnimal.isTame() && !entityClearData.clearPet()) return;
 						clearList.add(livingEntity);
-						return;
+						//clears[0]++;
 					}
-					if (serverLevel.getNearestPlayer(livingEntity, ClearConfig.ENTITY_CLEAR.getData().safeDistance()) != null)
-						return;
-					if (livingEntity.getCustomName() != null && !ClearConfig.ENTITY_CLEAR.getData().clearName()) return;
-					if (livingEntity.getType().getCategory().equals(MobCategory.MONSTER) && !ClearConfig.ENTITY_CLEAR.getData().clearMob())
-						return;
-					else if (livingEntity instanceof Npc && !ClearConfig.ENTITY_CLEAR.getData().clearNpc()) return;
-					else if (livingEntity instanceof Animal && !ClearConfig.ENTITY_CLEAR.getData().clearAnimal()) return;
-					else if (livingEntity instanceof TamableAnimal tamableAnimal && tamableAnimal.isTame() && !ClearConfig.ENTITY_CLEAR.getData().clearPet())
-						return;
-					clearList.add(livingEntity);
-					//clears[0]++;
-				}
+				});
 			});
 		}
 		return clearList;
@@ -72,24 +73,26 @@ public class ClearHelper {
 		if (isClearTrashBin) return;
 		isClearTrashBin = true;
 		if (TrashBinContainer.nowPlayer != null) TrashBinContainer.nowPlayer.closeContainer();
-		if (ClearConfig.ITEM_CLEAR.getData().clearTrash()) TrashBinContainer.SLOTS.clear();
-		int[] clears = {0};
-		server.getAllLevels().forEach(serverLevel -> serverLevel.getEntities(EntityTypeTest.forClass(ItemEntity.class), itemEntity -> true).forEach(entity -> {
-			if (ClearConfig.ITEM_CLEAR.getData().whiteList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString()))
-				return;
-			if (ClearConfig.ITEM_CLEAR.getData().blackList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString())) {
+		ClearConfig.ITEM_CLEAR.read(itemClearData -> {
+			if (itemClearData.clearTrash()) TrashBinContainer.SLOTS.clear();
+			int[] clears = {0};
+			server.getAllLevels().forEach(serverLevel -> serverLevel.getEntities(EntityTypeTest.forClass(ItemEntity.class), itemEntity -> true).forEach(entity -> {
+				if (itemClearData.whiteList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString()))
+					return;
+				if (itemClearData.blackList().contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString())) {
+					clears[0]++;
+					clearItem(itemClearData,entity);
+					return;
+				}
+				if (serverLevel.getNearestPlayer(entity, itemClearData.safeDistance()) != null)
+					return;
+				if (entity.getCustomName() != null && !itemClearData.clearName()) return;
 				clears[0]++;
-				clearItem(entity);
-				return;
-			}
-			if (serverLevel.getNearestPlayer(entity, ClearConfig.ITEM_CLEAR.getData().safeDistance()) != null)
-				return;
-			if (entity.getCustomName() != null && !ClearConfig.ITEM_CLEAR.getData().clearName()) return;
-			clears[0]++;
-			clearItem(entity);
-		}));
-		quickSort();
-		MsgHelper.sendServerMsg(server, ClearConfig.ITEM_CLEAR.getData().msg().getOrDefault(0, ""), MsgHelper.createMsgMap("$clear.count", String.valueOf(clears[0])));
+				clearItem(itemClearData,entity);
+			}));
+			quickSort();
+			MsgHelper.sendServerMsg(server, itemClearData.msg().getOrDefault(0, ""), MsgHelper.createMsgMap("$clear.count", String.valueOf(clears[0])));
+		});
 		isClearTrashBin = false;
 	}
 
@@ -125,9 +128,9 @@ public class ClearHelper {
 		TrashBinContainer.SLOTS.putAll(map);
 	}
 
-	public static void clearItem(ItemEntity itemEntity) {
+	public static void clearItem(ItemClearData itemClearData, ItemEntity itemEntity) {
 		if (itemEntity.isRemoved()) return;
-		if (ClearConfig.ITEM_CLEAR.getData().trash())
+		if (itemClearData.trash())
 			TrashBinContainer.SLOTS.put(TrashBinContainer.SLOTS.size(), itemEntity.getItem());
 		itemEntity.remove(Entity.RemovalReason.DISCARDED);
 	}

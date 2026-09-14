@@ -23,12 +23,8 @@ public class LoginConfig extends _JsonConfigS<LoginData> {
 	}
 
 	public void openLogin(ServerPlayer serverPlayer){
-		read(loginData -> {
-			if (loginData.enable()) LoginHelper.openLogin(serverPlayer);
-		});
-	}
-
-	public Map<String, String> getPasswords() {
-		return read(LoginData::passwords,new HashMap<>());
+		if (Boolean.TRUE.equals(read(LoginData::enable))){
+			LoginHelper.openLogin(serverPlayer);
+		}
 	}
 }

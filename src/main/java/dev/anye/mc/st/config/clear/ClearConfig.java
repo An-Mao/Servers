@@ -167,13 +167,13 @@ public class ClearConfig {
 		}
 
 		public static boolean isInWhiteList(EntityClearData entityClearData,Entity entity) {
-			return entityClearData.whiteList().contains(EntityHelper.getEntityRegID(entity));
+			return entityClearData.whiteList().contains(EntityHelper.getEntityRegStringID(entity));
 		}
 
 		public boolean isInBlackList(Entity entity) {
 			return read(entityClearData -> {
 				if (entityClearData.enable()){
-					return entityClearData.blackList().contains(EntityHelper.getEntityRegID(entity));
+					return entityClearData.blackList().contains(EntityHelper.getEntityRegStringID(entity));
 				}
 				return false;
 			});
@@ -235,7 +235,7 @@ public class ClearConfig {
 
 	}
 
-	public static class ItemClear extends _JsonConfig<ItemClearData> {
+	public static class ItemClear extends _JsonConfigS<ItemClearData> {
 		private static final String FILE = _File.getFilePath(ConfigDir.CLEAR, "item.json");
 
 		public ItemClear() {

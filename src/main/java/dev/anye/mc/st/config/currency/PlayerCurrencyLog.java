@@ -2,6 +2,7 @@ package dev.anye.mc.st.config.currency;
 
 import com.google.gson.reflect.TypeToken;
 import com.mojang.logging.LogUtils;
+import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.core.exception._IOException;
 import dev.anye.core.json._JsonConfig;
 import dev.anye.core.json._JsonConfigS;
@@ -11,6 +12,12 @@ import dev.anye.mc.st.config.ConfigDir;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 public final class PlayerCurrencyLog extends _JsonConfigS<List<PlayerCurrencyLog.Data>> {
@@ -41,6 +48,23 @@ public final class PlayerCurrencyLog extends _JsonConfigS<List<PlayerCurrencyLog
 		return true;
 	}
 
+	public static boolean writeLog(String uuid,String log){
+		return writeLog(Path.of(path(uuid)),(log + "\n").getBytes(StandardCharsets.UTF_8));
+	}
+	public static boolean writeLog(ServerPlayer serverPlayer,String log){
+		return writeLog(serverPlayer.getStringUUID(),log);
+	}
+
+	public static boolean writeLog(Path path,byte[] bytes){
+		try (FileChannel channel = FileChannel.open(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			channel.write(buffer);
+			return true;
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+	}
 
 
 
@@ -50,7 +74,7 @@ public final class PlayerCurrencyLog extends _JsonConfigS<List<PlayerCurrencyLog
 
 	public static String path(String uuid){
 		String dir = _File.getFilePath(ConfigDir.getPlayerCurrencyDir(uuid),"Log");
-		if (_File.checkAndCreateDir(dir)) return _File.getFilePath(dir, ST.FAST_DATE_TIME.update().toDateString("-")+".json");
+		if (_File.checkAndCreateDir(dir)) return _File.getFilePath(dir, ST.FAST_DATE_TIME.update().toDateString("-")+ _SuffixCDT.LOG_SUFFIX);
 		throw new _IOException(dir);
 	}
 
@@ -59,6 +83,5 @@ public final class PlayerCurrencyLog extends _JsonConfigS<List<PlayerCurrencyLog
 			this.source = "["+ST.FAST_DATE_TIME.toTimeString(":")+"]"+source;
 			this.number = number;
 		}
-
 	}
 }

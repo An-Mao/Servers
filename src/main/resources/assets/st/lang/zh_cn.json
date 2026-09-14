@@ -60,7 +60,19 @@
   "set_lang.command.wainning": "此语言代码的语言未加载",
   "set_lang.command.failed": "设置语言失败",
 
+  "currency.st.name": "喵币",
 
   "sell.command.item.success":"上架物品成功",
-  "sell.command.item.failed":"上架物品失败"
+  "sell.command.item.failed":"上架物品失败",
+
+  "command.st.my":"玩家UUID：$uuid\n 货币：$currency",
+
+  "shelf.st.item.player.error.write_log":"货币日志写入失败",
+  "shelf.st.item.player.error.locked":"货币功能已被锁定",
+  "shelf.st.item.player.error.insufficient_funds":"货币不足",
+  "shelf.st.item.player.error.currency_overrun":"货币超限",
+  "shelf.st.item.player.error.price":"货币数量不符合规范",
+  "currency.st.player.config.error":"玩家货币系统异常",
+  "shelf.st.item.config.error":"物品货架未配置或配置异常",
+  "shelf.st.item.buy.error.not_have":"指定物品不存在"
 }

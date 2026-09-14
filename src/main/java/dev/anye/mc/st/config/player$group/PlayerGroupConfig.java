@@ -13,14 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerGroupConfig {
-	public static final Map<String, Group> GROUPS = getGroups();
+	public static final Map<String, List<String>> GROUPS = getGroups();
 	private PlayerGroupConfig(){}
-	public static Map<String, Group> getGroups() {
-		HashMap<String, Group> abc = new HashMap<>();
+	public static Map<String, List<String>> getGroups() {
+		Map<String, List<String>> abc = new HashMap<>();
 		List<Path> jsonFiles = _File.getFiles(ConfigDir.PLAYER_GROUP, ".json");
 		for (Path path : jsonFiles) {
 			String fileName = path.getFileName().toString();
-			abc.put(fileName, new Group(path.toString()));
+			new Group(path.toString()).read(strings -> {
+				abc.put(fileName,strings);
+			});
+
 		}
 		return abc;
 	}

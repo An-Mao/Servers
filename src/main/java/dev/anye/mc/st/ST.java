@@ -32,6 +32,8 @@ public class ST {
 		_Pack.writeFiles("assets/st/js/", ConfigDir.JAVASCRIPT, ".js", "TpaRequest");
 
 		Language.loadLanguage();
+
+		_Pack.writeFiles("assets/st/config/currency/entity/", ConfigDir.CURRENCY_ENTITY, ".json", "zombie@minecraft");
 	}
 
 	public ST(IEventBus modEventBus, ModContainer modContainer) {

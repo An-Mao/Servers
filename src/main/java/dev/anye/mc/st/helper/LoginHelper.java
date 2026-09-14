@@ -3,6 +3,8 @@ package dev.anye.mc.st.helper;
 import dev.anye.core.bytes._Byte;
 import dev.anye.mc.st.config.Language;
 import dev.anye.mc.st.config.login.LoginConfig;
+import dev.anye.mc.st.config.login.LoginData;
+import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.menu.LoginMenu;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +18,7 @@ public class LoginHelper {
 	private static final List<String> players = new ArrayList<>();
 
 	public static boolean checkLogin(ServerPlayer serverPlayer) {
-		if (LoginConfig.INSTANCE.getData().enable()) {
+		if (Boolean.TRUE.equals(LoginConfig.INSTANCE.read(LoginData::enable))) {
 			return !LoginHelper.isLogin(serverPlayer);
 		}
 		return false;
@@ -50,27 +52,28 @@ public class LoginHelper {
 
 	public static boolean Login(ServerPlayer player, String password) {
 		if (isLogin(player)) {
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().fail());
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.read(LoginData::fail,""));
 			return false;
 		}
-		if (!LoginConfig.INSTANCE.getPasswords().containsKey(player.getStringUUID())) {
-			LoginConfig.INSTANCE.getPasswords().put(player.getStringUUID(), encodePassword(password));
-			LoginConfig.INSTANCE.save();
-			addLogin(player);
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().success());
-			return true;
-		} else {
-			if (LoginConfig.INSTANCE.getPasswords().get(player.getStringUUID()).equals(encodePassword(password))) {
-				addLogin(player);
-				MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().success());
+		boolean[] l = {false};
+		PlayerConfig playerConfig = PlayerConfig.get(player);
+		if (Boolean.TRUE.equals(playerConfig.read(playerData -> {
+			if (playerData.emptyPassword()){
+				l[0] = true;
 				return true;
 			}
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.getData().fail());
+			return playerData.checkPassword(player,password);
+		}))){
+			if (l[0]){
+				playerConfig.update(playerData -> playerData.setPassword(player,password));
+				playerConfig.save();
+			}
+			addLogin(player);
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.read(LoginData::success,""));
+			return true;
+		}else {
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.read(LoginData::fail,""));
 			return false;
 		}
-	}
-
-	public static String encodePassword(String password) {
-		return _Byte.getMd5(password);
 	}
 }

@@ -26,7 +26,11 @@ public class ConfigDir {
 
 	public static final String CURRENCY = _File.getFilePath(BASE, "Currency");
 	public static final String CURRENCY_SHELF = _File.getFilePath(CURRENCY, "Shelf");
+
+	public static final String CURRENCY_ENTITY = _File.getFilePath(CURRENCY, "Entity");
+
 	public static final String SHELF_ITEM = _File.getFilePath(CURRENCY_SHELF, "Item");
+	public static final String SHELF_ITEM_LOG = _File.getFilePath(CURRENCY_SHELF, "ItemLog");
 	public static final String SHELF_ENTITY = _File.getFilePath(CURRENCY_SHELF, "Entity");
 	public static final String SHELF_XP = _File.getFilePath(CURRENCY_SHELF, "Xp");
 
@@ -47,9 +51,13 @@ public class ConfigDir {
 		_File.checkAndCreateDir(DATA);
 		_File.checkAndCreateDir(PLAYER);
 		_File.checkAndCreateDir(PLAYER_DATA);
+
 		_File.checkAndCreateDir(CURRENCY);
+		_File.checkAndCreateDir(CURRENCY_ENTITY);
+
 		_File.checkAndCreateDir(CURRENCY_SHELF);
 		_File.checkAndCreateDir(SHELF_ITEM);
+		_File.checkAndCreateDir(SHELF_ITEM_LOG);
 		_File.checkAndCreateDir(SHELF_ENTITY);
 		_File.checkAndCreateDir(SHELF_XP);
 	}

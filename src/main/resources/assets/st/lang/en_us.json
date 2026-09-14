@@ -60,6 +60,19 @@
   "set_lang.command.wainning": "the code language not load",
   "set_lang.command.failed": "set language failed",
 
+  "currency.st.name": "MeowCoins",
+
   "sell.command.item.success":"sell item success",
-  "sell.command.item.failed":"sell item failed"
+  "sell.command.item.failed":"sell item failed",
+
+  "command.st.my":"PLAYER UUID：$uuid\n CURRENCY：$currency",
+
+  "shelf.st.item.player.error.write_log":"Currency log write error",
+  "shelf.st.item.player.error.locked":"Currency system is locked",
+  "shelf.st.item.player.error.insufficient_funds":"Insufficient funds",
+  "shelf.st.item.player.error.currency_overrun":"Currency overrun",
+  "shelf.st.item.player.error.price":"Currency range error",
+  "currency.st.player.config.error":"Player currency system is error",
+  "shelf.st.item.config.error":"Item Shelf Config is error",
+  "shelf.st.item.buy.error.not_have":"The item is empty"
 }

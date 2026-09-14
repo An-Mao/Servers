@@ -17,17 +17,13 @@ public class LoginRewardHelper {
 		if (serverPlayer == null) return false;
 		String uuid = serverPlayer.getStringUUID();
 		List<String> list = new ArrayList<>();
+		if (!LoginReward.LOGIN_DATA.gived(uuid,list)) return false;
 
-
-		if (LoginReward.LOGIN_DATA.getData().containsKey(LoginReward.getDayCheck())) {
-			list = LoginReward.LOGIN_DATA.getData().get(LoginReward.getDayCheck());
-			if (list.contains(uuid)) {
-				return false;
-			}
-		}
 
 		list.add(uuid);
-		LoginReward.LOGIN_DATA.getData().put(LoginReward.getDayCheck(), list);
+		LoginReward.LOGIN_DATA.update(stringListMap -> {
+			stringListMap.put(LoginReward.getDayCheck(), list);
+		});
 		LoginReward.LOGIN_DATA.save();
 		List<ItemStack> rewards = new ArrayList<>(LoginReward.I.getDayReward(uuid));
 		if (rewards.isEmpty()) return false;

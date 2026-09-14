@@ -7,13 +7,12 @@ public record LoginData(
 	boolean enable,
 	String success,
 	String fail,
-	int time,
-	Map<String, String> passwords) {
+	int time
+) {
 	public static final LoginData DEFAULT = new LoginData(
 			true,
 			"login.success",
 			"login.failed",
-			1200,
-			new HashMap<>()
+			1200
 	);
 }

@@ -5,9 +5,8 @@ import dev.anye.mc.st.config.Config;
 import dev.anye.mc.st.config.Language;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.login.LoginConfig;
-import dev.anye.mc.st.helper.ClearHelper;
+import dev.anye.mc.st.config.login.LoginData;
 import dev.anye.mc.st.helper.LoginHelper;
-import dev.anye.mc.st.helper.MsgHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,7 +45,7 @@ public class TickEvent {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer && LoginHelper.checkLogin(serverPlayer)) {
 			String uuid = serverPlayer.getStringUUID();
 			loginTime.put(uuid, loginTime.getOrDefault(uuid, 0) + 1);
-			if (loginTime.get(uuid) >= LoginConfig.INSTANCE.getData().time()) {
+			if (loginTime.get(uuid) >= LoginConfig.INSTANCE.read(LoginData::time,0)) {
 				serverPlayer.connection.disconnect(Language.getComponent(serverPlayer,"login.failed"));
 				loginTime.remove(uuid);
 			}
@@ -58,7 +57,7 @@ public class TickEvent {
 	@SubscribeEvent
 	public static void onEntityTick(EntityTickEvent.Post event) {
 		if (event.getEntity().level().isClientSide()) return;
-		if (Config.I.getData().clearAnomalousEntity) {
+		if (Boolean.TRUE.equals(Config.I.read(configData -> configData.clearAnomalousEntity))) {
 			if (event.getEntity() instanceof LivingEntity livingEntity) {
 				if (livingEntity.getPose().equals(Pose.DYING)) {
 					if (livingEntity.deathTime > 20) {

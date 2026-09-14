@@ -1,15 +1,30 @@
 package dev.anye.mc.st.menu;
 
+import com.mojang.logging.LogUtils;
 import dev.anye.mc.st.sys.Currency;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+
+import java.util.List;
 
 public class ItemShelfMenu extends PageMenu {
+	private static final Logger LOGGER = LogUtils.getLogger();
+	private List<ItemStack> stacks ;
 	public ItemShelfMenu(int id, Inventory playerInventory) {
 		super(MenuType.GENERIC_9x6, id,playerInventory, Currency.I.shelf().getItems().size(),28,true,45);
+	}
+
+	public ItemStack getShelfItem(int index) {
+		if (index < 0 || index > stacks.size() - 1) return ItemStack.EMPTY;
+		return stacks.get(index);
 	}
 
 
@@ -20,9 +35,24 @@ public class ItemShelfMenu extends PageMenu {
 			for (int col = 0; col < 7; col++) {
 				int i = 10 + row * 9 + col;
 				int iii = ii;
-				this.addItemSlot(i,(x, y) -> new SlotButton<>(this.itemHandler,this.itemHandler::set,iii,x,y,null,null));
+				this.addItemSlot(i,(x, y) -> new SlotButton<>(this.itemHandler,this.itemHandler::set,iii,x,y,player -> this.playerClick(player,iii),null));
 				ii++;
 			}
+		}
+	}
+
+	public void playerClick(Player player,int index){
+		if (player instanceof ServerPlayer serverPlayer) {
+			LOGGER.debug("playerClick");
+			ItemStack stack = this.itemHandler.getResource(index).toStack();
+			if (stack.isEmpty()){
+				return;
+			}
+			stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).update(compoundTag -> {
+				String uuid = compoundTag.getString("shelf.st.item.uuid").orElse("");
+				if (uuid.isBlank())return;
+				Currency.I.shelf().buyItem(serverPlayer,uuid);
+			});
 		}
 	}
 
@@ -38,6 +68,18 @@ public class ItemShelfMenu extends PageMenu {
 
 	@Override
 	public void pageRefresh() {
+		stacks = Currency.I.getShelfItems();
 
+		int pageOffset = this.pageItemNumber * this.pageIndex;
+		for (int i = 0; i < itemHandler.size(); i ++){
+			ItemStack itemStack = getShelfItem(i + pageOffset);
+			if (itemStack.isEmpty()) continue;
+			itemHandler.set(i,ItemResource.of(getShelfItem(i + pageOffset)),1);
+		}
+	}
+
+	private int getItemIndex(int i){
+		int pageOffset = this.pageItemNumber * this.pageIndex;
+		return i + pageOffset;
 	}
 }

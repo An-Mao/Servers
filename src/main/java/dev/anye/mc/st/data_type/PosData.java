@@ -32,4 +32,5 @@ public class PosData {
 	public PosData copy() {
 		return new PosData(Level, X, Y, Z, Yaw, xRot, Pitch);
 	}
+
 }

@@ -3,7 +3,7 @@ package dev.anye.mc.st.config;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.logging.LogUtils;
 import dev.anye.core.cdt._SuffixCDT;
-import dev.anye.core.json._JsonConfig;
+import dev.anye.core.json._JsonConfigX;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.player_data.PlayerConfig;
 import net.minecraft.network.chat.Component;
@@ -16,17 +16,26 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class Language extends _JsonConfig<Map<String, String>> {
+/**
+ * 消息本地化类
+ */
+public class Language extends _JsonConfigX<Map<String, String>> {
+	private static final String DEFAULT_LANG_KEY = "en_us";
+	//private static final String FILE = _File.getFilePath(ConfigDir.LANGUAGE,"default.json");
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final String FILE = _File.getFilePath(ConfigDir.LANGUAGE,"default.json");
 	private static final Language DEFAULT_LANG = new Language("default.json",Default(),true);
-	public static final Map<String,Language> LANG = new HashMap<>();
+	private static final Map<String,Language> LANG = new HashMap<>();
+
 
 	public Language(String filePath,boolean r) {
 		this(filePath, new HashMap<>(),r);
 	}
 	public Language(String filePath,Map<String, String> data,boolean r) {
-		super(_File.getFilePath(ConfigDir.LANGUAGE, filePath), data, new TypeToken<>() {},r);
+		super(getFilePath(filePath), data, new TypeToken<>() {},r);
+	}
+
+	public static String getFilePath(String file){
+		return _File.getFilePath(ConfigDir.LANGUAGE, file);
 	}
 
 	public static void reloadLanguage(){
@@ -100,14 +109,27 @@ public class Language extends _JsonConfig<Map<String, String>> {
 
 		map.put("set_lang.command.success", "set language success");
 		map.put("set_lang.command.failed", "set language failed");
-		map.put("set_lang.command.wainning","the code language not load");
+		map.put("set_lang.command.wainning", "the code language not load");
 
-		map.put("sell.command.item.success","sell item success");
-		map.put("sell.command.item.failed","sell item failed");
+
+		map.put("currency.st.name", "MeowCoins");
+
+		map.put("sell.command.item.success", "sell item success");
+		map.put("sell.command.item.failed", "sell item failed");
+
+
+		map.put("command.st.my", "PLAYER UUID：$uuid\\n CURRENCY：$currency");
+
+		map.put("shelf.st.item.player.error.write_log", "Currency log write error");
+		map.put("shelf.st.item.player.error.locked", "Currency system is locked");
+		map.put("shelf.st.item.player.error.insufficient_funds", "Insufficient funds");
+		map.put("shelf.st.item.player.error.currency_overrun", "Currency overrun");
+		map.put("shelf.st.item.player.error.price", "Currency range error");
+		map.put("currency.st.player.config.error", "Player currency system is error");
+		map.put("shelf.st.item.config.error", "Item Shelf Config is error");
+		map.put("shelf.st.item.buy.error.not_have", "The item is empty");
 		return map;
 	}
-
-
 
 
 	public static String getLanguage() {
@@ -119,13 +141,13 @@ public class Language extends _JsonConfig<Map<String, String>> {
 		lang = lang.toLowerCase();
 		File file = new File(_File.getFilePath(ConfigDir.LANGUAGE, lang + ".json"));
 		if (!file.exists()) {
-			return "en_us";
+			return DEFAULT_LANG_KEY;
 		}
 		return file.getName();
 	}
 
 	public static String translatable(String key,Object... value) {
-		return translatable("en_us", key,value);
+		return translatable(DEFAULT_LANG_KEY, key,value);
 	}
 	public static String translatable(ServerPlayer serverPlayer,String key,Object... value) {
 		if (serverPlayer == null) return translatable("",key, key);
@@ -136,9 +158,10 @@ public class Language extends _JsonConfig<Map<String, String>> {
 	}
 
 	public static String translatable(String lang,String key,String def,Object... value){
-		if (lang.isBlank()) lang = "en_us";
-		Language language = LANG.getOrDefault(lang + _SuffixCDT.JSON_SUFFIX,DEFAULT_LANG);
-		String msg = language.read(map -> map.get(key),DEFAULT_LANG.read(m -> m.get(key),def));
+		if (lang.isBlank()) lang = DEFAULT_LANG_KEY;
+		lang = lang + _SuffixCDT.JSON_SUFFIX;
+		Language language = hasLanguage(lang) ? LANG.get(lang) : DEFAULT_LANG;
+		String msg = language.data().getOrDefault(key,def);
 		return MessageFormat.format(msg,value);
 	}
 
@@ -146,5 +169,21 @@ public class Language extends _JsonConfig<Map<String, String>> {
 		return Component.literal(translatable(serverPlayer,key));
 	}
 
+	public static boolean hasLanguage(String lang){
+		if (containsLanguage(lang)){
+			return true;
+		}
+		if (new File(getFilePath(lang)).exists()){
+			Language language = new Language(lang,false);
+			if (language.data() != null){
+				LANG.put(lang,language);
+				return true;
+			}
+		}
+		return false;
+	}
 
+	public static boolean containsLanguage(String lang){
+		return LANG.containsKey(lang);
+	}
 }

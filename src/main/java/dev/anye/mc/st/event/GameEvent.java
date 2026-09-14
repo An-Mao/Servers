@@ -1,5 +1,7 @@
 package dev.anye.mc.st.event;
 
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.mc.st.ST;
@@ -10,11 +12,13 @@ import dev.anye.mc.st.config.black_list.BlackListConfig;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.command.CommandConfig;
 import dev.anye.mc.st.config.login.LoginConfig;
+import dev.anye.mc.st.config.login.LoginData;
 import dev.anye.mc.st.config.msg.MsgConfig;
 import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.helper.CommandHelper;
 import dev.anye.mc.st.helper.CommandList;
 import dev.anye.mc.st.helper.LoginHelper;
+import dev.anye.mc.st.sys.Currency;
 import dev.anye.mc.st.sys.EnchantmentExtract;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -38,7 +42,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public class GameEvent {
 	@SubscribeEvent
 	public static void onDamageFirst(EntityInvulnerabilityCheckEvent event) {
-		if (LoginConfig.INSTANCE.getData().enable()) {
+		if (Boolean.TRUE.equals(LoginConfig.INSTANCE.read(LoginData::enable))) {
 			if (event.getEntity() instanceof ServerPlayer serverPlayer) {
 				if (!LoginHelper.isLogin(serverPlayer)) event.setInvulnerable(true);
 			}
@@ -65,7 +69,7 @@ public class GameEvent {
 					if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
 						String lang = StringArgumentType.getString(context,"language");
 						PlayerConfig config = PlayerConfig.get(serverPlayer);
-						if (!Language.LANG.containsKey(lang + _SuffixCDT.JSON_SUFFIX)){
+						if (!Language.containsLanguage(lang + _SuffixCDT.JSON_SUFFIX)){
 							config.sendMessage(serverPlayer,"set_lang.command.warnning");
 						}
 						config.setLang(lang);
@@ -75,7 +79,7 @@ public class GameEvent {
 					CommandHelper.sendSuccess(context,"set_lang.command.failed");
 					return 0;
 				})));
-
+		event.getDispatcher().register(Commands.literal("sell").then(Commands.literal("item").then(Commands.argument("price", DoubleArgumentType.doubleArg(0)).executes(CommandHelper::sellItem))));
 	}
 
 	public static int WAIT = 0;
@@ -98,18 +102,21 @@ public class GameEvent {
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-			CommandConfig.I.ifPresent(commandData -> {
+			CommandConfig.I.read(commandData -> {
 				if (commandData.back()) {
 					PlayerConfig.get(serverPlayer).addBack(serverPlayer);
 				}
 			});
+		}else {
+			if (event.getSource().getEntity() instanceof ServerPlayer serverPlayer){
+				Currency.I.entity(serverPlayer,event.getEntity());
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-			//AtomicBoolean atomicBoolean = new AtomicBoolean();
 			BlackListConfig.INSTANCE.check(serverPlayer);
 			LoginConfig.INSTANCE.openLogin(serverPlayer);
 			MsgConfig.FIRST_JOIN.send(serverPlayer);
@@ -121,7 +128,7 @@ public class GameEvent {
 	@SubscribeEvent
 	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-			LoginConfig.INSTANCE.ifPresent(loginData -> {
+			LoginConfig.INSTANCE.read(loginData -> {
 				if (loginData.enable()) {
 					LoginHelper.removeLogin(serverPlayer);
 				}
@@ -189,35 +196,10 @@ public class GameEvent {
 	@SubscribeEvent
 	public static void onAnvil(AnvilUpdateEvent event){
 		if (event.getPlayer() instanceof ServerPlayer) {
-			Config.I.ifPresent(configData -> {
+			Config.I.read(configData -> {
 				if (configData.enchantmentExtract) {
 					EnchantmentExtract.onUpdate(event, event.getLeft(), event.getRight());
 				}
-/*
-				ItemStack left = event.getLeft();
-				CustomData data = left.get(DataComponents.CUSTOM_DATA);
-				CompoundTag tag = data != null ? data.copyTag() : new CompoundTag();
-				if (tag.contains("isEnchantmentExtract")) tag.remove("isEnchantmentExtract");
-				ItemStack right = event.getRight();
-				if (left.isEmpty() || left.is(Items.ENCHANTED_BOOK) || right.isEmpty() || !right.is(Items.BOOK)) return;
-				ItemEnchantments enchantments = left.getTagEnchantments();
-				if (enchantments.isEmpty()) return;
-				ItemStack out = new ItemStack(Items.ENCHANTED_BOOK);
-				insertFlag(event.getLeft());
-
-				CustomData data = left.get(DataComponents.CUSTOM_DATA);
-				System.out.println(data.copyTag());
-				out.set(DataComponents.STORED_ENCHANTMENTS,enchantments);
-				//left.set(DataComponents.ENCHANTMENTS,ItemEnchantments.EMPTY);
-				//right.shrink(1);
-				event.setOutput(out);
-				event.setMaterialCost(1);
-				int[] c = {0};
-				enchantments.keySet().forEach(enchantmentHolder -> {
-					c[0] += enchantmentHolder.value().getAnvilCost() * enchantments.getLevel(enchantmentHolder);
-				});
-				event.setXpCost(c[0]);*/
-
 			});
 		}
 	}
@@ -227,7 +209,7 @@ public class GameEvent {
 	//@SubscribeEvent
 	public static void onAnvil(AnvilCraftEvent.Post event){
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-			Config.I.ifPresent(configData -> {
+			Config.I.read(configData -> {
 				if (configData.enchantmentExtract) {
 					EnchantmentExtract.onTake(serverPlayer, event.getLeft(), event.getRight());
 				}
