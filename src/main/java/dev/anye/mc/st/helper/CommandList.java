@@ -20,7 +20,8 @@ public class CommandList {
 		this.dispatcher = dispatcher;
 		commands = new ArrayList<>();
 
-		//commands.add(CommandData.create(CommandHelper::login,root,"login"));
+		commands.add(CommandData.create(CommandHelper::st));
+
 		commands.add(CommandData.create(CommandData.Permission_Player, CommandHelper::reward, "reward"));
 		commands.add(CommandData.create(CommandHelper::clearAll, "clear", "all"));
 		commands.add(CommandData.create(CommandHelper::clearItem, "clear", "item"));

@@ -5,7 +5,7 @@ import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.data_type.PosData;
 import dev.anye.mc.st.helper.MsgHelper;
 import net.minecraft.server.level.ServerPlayer;

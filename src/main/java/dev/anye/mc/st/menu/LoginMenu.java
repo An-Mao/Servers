@@ -1,6 +1,6 @@
 package dev.anye.mc.st.menu;
 
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.helper.LoginHelper;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;

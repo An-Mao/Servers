@@ -5,7 +5,7 @@ import dev.anye.core.pack._Pack;
 import dev.anye.core.system.task.TimingWheel;
 import dev.anye.core.time.FastDateTime;
 import dev.anye.mc.st.config.ConfigDir;
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

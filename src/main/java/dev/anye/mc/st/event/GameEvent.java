@@ -1,12 +1,11 @@
 package dev.anye.mc.st.event;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.Config;
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import dev.anye.mc.st.config.black_list.BlackListConfig;
 import dev.anye.mc.st.config.clear.ClearConfig;

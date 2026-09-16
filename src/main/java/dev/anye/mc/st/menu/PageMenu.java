@@ -1,9 +1,10 @@
 package dev.anye.mc.st.menu;
 
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -27,9 +28,9 @@ public abstract class PageMenu extends AbstractContainerMenu {
 	protected int maxPage;
 
 	protected final int pageItemNumber;
-	protected final boolean border;
-	protected final int pageButtonStartIndex;
 	protected final Map<Integer,Slot> itemSlots = new HashMap<>();
+
+	protected final ServerPlayer serverPlayer;
 
 	public static Map<Integer, Vec2> slotsIndex() {
 		Map<Integer,Vec2> map = new HashMap<>();
@@ -44,20 +45,29 @@ public abstract class PageMenu extends AbstractContainerMenu {
 	}
 
 
-
-
-	protected PageMenu(@Nullable MenuType<?> menuType, int containerId, Inventory playerInventory,int allItemNumber,int pageItemNumber,boolean border,int pageButtonStartIndex) {
+	protected PageMenu(@Nullable MenuType<?> menuType, int containerId, Inventory playerInventory,int allItemNumber,int pageItemNumber) {
 		super(menuType, containerId);
-		this.border = border;
 		this.playerInventory = playerInventory;
-		this.pageButtonStartIndex = pageButtonStartIndex;
 		this.pageItemNumber = pageItemNumber;
 		this.maxPage = getMaxPage(allItemNumber,pageItemNumber);
+
 		itemHandler = new ItemStacksResourceHandler(this.pageItemNumber);
+		fillWithEmpty();
+
+		this.serverPlayer = (ServerPlayer) playerInventory.player;
+
 		initItem();
-		initSlots();
+
+		addPageButton();
+		addInventory();
 		pageRefresh();
 		setAllSlots();
+	}
+
+	public void fillWithEmpty(){
+		for (int i = 0; i < this.itemHandler.size(); i++){
+			itemHandler.set(i,ItemResource.EMPTY,1);
+		}
 	}
 
 	public void addItemSlot(int index, ISlot slot){
@@ -66,50 +76,7 @@ public abstract class PageMenu extends AbstractContainerMenu {
 			itemSlots.put(index,slot.slot(vec2.x, vec2.y));
 		}
 	}
-	public void initSlots() {
-		/*
-		0  1  2  3  4  5  6  7  8
-		9  10 11 12 13 14 15 16 17
-		18 19 20 21 22 23 24 25 26
-
-		27 28 29 30 31 32 33 34 35
-		36 37 38 39 40 41 42 43 44
-		45 46 47 48 49 50 51 52 53
-		 */
-		addItemSlot(pageButtonStartIndex,this::xButton);
-		addItemSlot(pageButtonStartIndex + 1,this::xButton);
-		addItemSlot(pageButtonStartIndex + 2,this::prevButton);
-		addItemSlot(pageButtonStartIndex + 3,this::xButton);
-		addItemSlot(pageButtonStartIndex + 4,this::homeButton);
-		addItemSlot(pageButtonStartIndex + 5,this::xButton);
-		addItemSlot(pageButtonStartIndex + 6,this::nextButton);
-		addItemSlot(pageButtonStartIndex + 7,this::xButton);
-		addItemSlot(pageButtonStartIndex + 8,this::xButton);
-		if (border) {
-			addItemSlot(0, this::xButton);
-			addItemSlot(1, this::xButton);
-			addItemSlot(2, this::xButton);
-			addItemSlot(3, this::xButton);
-			addItemSlot(4, this::xButton);
-			addItemSlot(5, this::xButton);
-			addItemSlot(6, this::xButton);
-			addItemSlot(7, this::xButton);
-			addItemSlot(8, this::xButton);
-
-			addItemSlot(9, this::xButton);
-			addItemSlot(17, this::xButton);
-
-			addItemSlot(18, this::xButton);
-			addItemSlot(26, this::xButton);
-
-			addItemSlot(27, this::xButton);
-			addItemSlot(35, this::xButton);
-
-			addItemSlot(36, this::xButton);
-			addItemSlot(44, this::xButton);
-		}
-		addInventory();
-	}
+	public abstract void addPageButton();
 
 
 
@@ -134,11 +101,17 @@ public abstract class PageMenu extends AbstractContainerMenu {
 
 
 	public void setAllSlots() {
-		List<Slot> slotList = new ArrayList<>(Collections.nCopies(itemSlots.size(), null));
-		itemSlots.forEach(slotList::set);
-		slotList.forEach(slot -> {
-			if (slot != null) this.addSlot(slot);
+		//List<Slot> slotList = new ArrayList<>(Collections.nCopies(itemSlots.size(), null));
+		itemSlots.forEach((integer, slot) -> {
+			this.addSlot(slot);
+			/*if (integer < slotList.size()) {
+				slotList.set(integer,slot);
+				this.addSlot(slot);
+			}*/
 		});
+		/*slotList.forEach(slot -> {
+			if (slot != null) this.addSlot(slot);
+		});*/
 
 		//itemSlots.forEach(this.slots::set);
 
@@ -221,5 +194,15 @@ public abstract class PageMenu extends AbstractContainerMenu {
 	}
 	public interface ISlot{
 		Slot slot(int x,int y);
+	}
+
+	@Override
+	public boolean stillValid(Player player) {
+		return true;
+	}
+
+	@Override
+	public ItemStack quickMoveStack(Player player, int slotIndex) {
+		return ItemStack.EMPTY;
 	}
 }

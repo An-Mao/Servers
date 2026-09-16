@@ -1,9 +1,11 @@
 package dev.anye.mc.st.menu;
 
 import com.mojang.logging.LogUtils;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.sys.Currency;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -42,7 +44,7 @@ public class ItemShelfMenu extends PageMenu {
 	}
 
 	public void playerClick(Player player,int index){
-		if (player instanceof ServerPlayer serverPlayer) {
+		if (player instanceof ServerPlayer player1) {
 			LOGGER.debug("playerClick");
 			ItemStack stack = this.itemHandler.getResource(index).toStack();
 			if (stack.isEmpty()){
@@ -51,14 +53,9 @@ public class ItemShelfMenu extends PageMenu {
 			stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).update(compoundTag -> {
 				String uuid = compoundTag.getString("shelf.st.item.uuid").orElse("");
 				if (uuid.isBlank())return;
-				Currency.I.shelf().buyItem(serverPlayer,uuid);
+				Currency.I.shelf().buyItem(player1,uuid);
 			});
 		}
-	}
-
-	@Override
-	public @NonNull ItemStack quickMoveStack(@NonNull Player player, int slotIndex) {
-		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -81,5 +78,12 @@ public class ItemShelfMenu extends PageMenu {
 	private int getItemIndex(int i){
 		int pageOffset = this.pageItemNumber * this.pageIndex;
 		return i + pageOffset;
+	}
+
+	public static void open(ServerPlayer serverPlayer){
+		serverPlayer.openMenu(new SimpleMenuProvider(
+				(id, playerInventory, _) -> new ItemShelfMenu(id, playerInventory),
+				Language.getComponent(serverPlayer,"menu.st.shelf.item.title")
+		));
 	}
 }

@@ -1,6 +1,12 @@
 package dev.anye.mc.st.menu;
 
+import dev.anye.mc.st.config.lang.Language;
+import dev.anye.mc.st.config.command.CommandConfig;
+import dev.anye.mc.st.config.command.CommandData;
+import dev.anye.mc.st.helper.ClearHelper;
+import dev.anye.mc.st.helper.MsgHelper;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -14,12 +20,12 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TrashBinContainer extends PageMenu {
+public class TrashBinContainer extends FooterMenu {
 	public static ServerPlayer nowPlayer = null;
 	public static final Map<Integer, ItemStack> SLOTS = new HashMap<>();
 
 	public TrashBinContainer(int id, Inventory playerInventory) {
-		super(MenuType.GENERIC_9x6, id,playerInventory,getMaxPage(SLOTS.size(),45),45,false,45);
+		super(id,playerInventory,getMaxPage(SLOTS.size(),45));
 	}
 /*
 	private void setupSlots(Inventory playerInventory) {
@@ -85,11 +91,6 @@ public class TrashBinContainer extends PageMenu {
 	}
 
 	@Override
-	public boolean stillValid(@NonNull Player player) {
-		return true;
-	}
-
-	@Override
 	public @NotNull ItemStack quickMoveStack(@NotNull Player player, int ind) {
 		//System.out.println("Inventory slot index:"+ind);
 		Slot sourceSlot = slots.get(ind);
@@ -124,4 +125,23 @@ public class TrashBinContainer extends PageMenu {
 		nowPlayer = null;
 	}
 
+
+	public static void open(ServerPlayer serverPlayer) {
+		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::trash))) {
+			if (serverPlayer == null) return;
+			if (ClearHelper.isClearTrashBin) {
+				MsgHelper.sendMsgToPlayerF(serverPlayer,"trash.command.error.cleaning");
+				return;
+			}
+			if (TrashBinContainer.nowPlayer != null) {
+				MsgHelper.sendMsgToPlayerF(serverPlayer,"trash.command.error.has_player");
+				return;
+			}
+			TrashBinContainer.nowPlayer = serverPlayer;
+			serverPlayer.openMenu(new SimpleMenuProvider(
+					(id, playerInventory, playerEntity) -> new TrashBinContainer(id, playerInventory),
+					Language.getComponent(serverPlayer, "trash.menu.title")
+			));
+		}
+	}
 }

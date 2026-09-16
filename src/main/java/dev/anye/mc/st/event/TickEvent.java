@@ -2,7 +2,7 @@ package dev.anye.mc.st.event;
 
 import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.Config;
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.login.LoginConfig;
 import dev.anye.mc.st.config.login.LoginData;

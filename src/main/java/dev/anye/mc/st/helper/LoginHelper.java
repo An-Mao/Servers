@@ -1,7 +1,6 @@
 package dev.anye.mc.st.helper;
 
-import dev.anye.core.bytes._Byte;
-import dev.anye.mc.st.config.Language;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.login.LoginConfig;
 import dev.anye.mc.st.config.login.LoginData;
 import dev.anye.mc.st.config.player_data.PlayerConfig;
