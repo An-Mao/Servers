@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class PlayerCurrency extends _JsonConfigS<PlayerCurrency.Data> {
+public final class PlayerCurrency extends _JsonConfigS<PlayerCurrencyData> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 
@@ -25,7 +25,7 @@ public final class PlayerCurrency extends _JsonConfigS<PlayerCurrency.Data> {
 		this(main.getStringUUID(), off);
 	}
 	public PlayerCurrency(String uuid,ServerPlayer off) {
-		super(path(uuid), new Data(), new TypeToken<>(){}, false);
+		super(path(uuid), new PlayerCurrencyData(), new TypeToken<>(){}, false);
 		this.off = off;
 		this.uuid = uuid;
 	}
@@ -49,9 +49,11 @@ public final class PlayerCurrency extends _JsonConfigS<PlayerCurrency.Data> {
 		return className + "$==>" + methodName;
 	}
 
-	public boolean add(double value,String source){
+
+
+	public boolean add(BigDecimal value,String source){
 		if (source.isEmpty()) return false;
-		if (value < 0) return sub(-value,source);
+		if (value.compareTo(BigDecimal.ZERO) < 0) return sub(value.negate(),source);
 		if (Boolean.TRUE.equals(read(playerCurrencyData -> {
 			if (playerCurrencyData.isLock()) {
 				MsgHelper.sendMsgToPlayerF(off,"shelf.st.item.player.error.locked");
@@ -74,16 +76,20 @@ public final class PlayerCurrency extends _JsonConfigS<PlayerCurrency.Data> {
 		return false;
 	}
 
-	public boolean sub(double value,String source){
+
+	public boolean add(double value,String source){
+		return add(BigDecimal.valueOf(value),source);
+	}
+
+	public boolean sub(BigDecimal value,String source){
 		if (source.isEmpty()) return false;
-		if (value < 0) return add(-value,source);
+		if (value.compareTo(BigDecimal.ZERO) < 0) return add(value.negate(),source);
 		if (Boolean.TRUE.equals(read(playerCurrencyData -> {
 			if (playerCurrencyData.isLock()) {
 				MsgHelper.sendMsgToPlayerF(off,"shelf.st.item.player.error.locked");
 				return false;
 			}
-			BigDecimal decimal = BigDecimal.valueOf(value);
-			if (!playerCurrencyData.check(decimal)) {
+			if (!playerCurrencyData.check(value)) {
 				MsgHelper.sendMsgToPlayerF(off,"shelf.st.item.player.error.insufficient_funds");
 				return false;
 			}
@@ -102,74 +108,17 @@ public final class PlayerCurrency extends _JsonConfigS<PlayerCurrency.Data> {
 	}
 
 
+	public boolean sub(double value,String source){
+		return sub(BigDecimal.valueOf(value),source);
+	}
+
+
 	public static PlayerCurrency getPlayerCurrency(ServerPlayer serverPlayer){
 		return getPlayerCurrency(serverPlayer.getStringUUID(),serverPlayer);
 	}
 
 	public static PlayerCurrency getPlayerCurrency(String uuid,ServerPlayer serverPlayer){
 		return PLAYER_CURRENCY_MAP.computeIfAbsent(uuid, _ -> new PlayerCurrency(uuid,serverPlayer));
-	}
-
-
-
-
-
-
-	public static final class Data{
-		private BigDecimal currency;
-		private boolean lock;
-		public Data(){
-			this("0",false);
-		}
-		public Data(String currency,boolean lock){
-			this.currency = new BigDecimal(currency);
-			this.lock = lock;
-		}
-
-		public void lock(){
-			this.lock = true;
-		}
-		public void unlock(){
-			this.lock = false;
-		}
-		public boolean isLock(){
-			return lock;
-		}
-
-		public BigDecimal currency(){
-			return currency;
-		}
-		public boolean check(){
-			return check(BigDecimal.ZERO);
-		}
-
-		public boolean check(double v){
-			return check(BigDecimal.valueOf(v));
-		}
-
-		/**
-		 * 判断当前值与给定值的大小
-		 * @param v 给定值
-		 * @return 如果小于则返回false，大于或等于返回true
-		 */
-		public boolean check(BigDecimal v){
-			return currency.compareTo(v) >= 0;
-		}
-
-		private void add(double value){
-			add(BigDecimal.valueOf(value));
-		}
-
-		private void add(BigDecimal value){
-			currency = currency.add(value);
-		}
-		private void sub(double value){
-			sub(BigDecimal.valueOf(value));
-		}
-		private void sub(BigDecimal value){
-			currency = currency.subtract(value);
-		}
-
 	}
 
 }

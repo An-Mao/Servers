@@ -2,9 +2,10 @@ package dev.anye.mc.st.menu;
 
 import com.mojang.logging.LogUtils;
 import dev.anye.mc.st.config.lang.Language;
+import dev.anye.mc.st.helper.MsgHelper;
 import dev.anye.mc.st.menu.base.BorderPageMenu;
 import dev.anye.mc.st.menu.button.SlotButton;
-import dev.anye.mc.st.sys.Currency;
+import dev.anye.mc.st.sys.currency.Currency;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -22,7 +23,7 @@ public class ItemShelfMenu extends BorderPageMenu {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private List<ItemStack> stacks ;
 	public ItemShelfMenu(int id, Inventory playerInventory) {
-		super( id,playerInventory, Currency.I.shelf().getItems().size());
+		super(id,playerInventory, Currency.I.shelf().getItemsCount());
 	}
 
 	public ItemStack getShelfItem(int index) {
@@ -54,7 +55,7 @@ public class ItemShelfMenu extends BorderPageMenu {
 			stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).update(compoundTag -> {
 				String uuid = compoundTag.getString("shelf.st.item.uuid").orElse("");
 				if (uuid.isBlank())return;
-				Currency.I.shelf().buyItem(player1,uuid);
+				MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.item.buy." + (Currency.I.shelf().buyItem(player1,uuid) ? "success":"failed"));
 			});
 		}
 	}

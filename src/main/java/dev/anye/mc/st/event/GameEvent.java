@@ -17,7 +17,7 @@ import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.helper.CommandHelper;
 import dev.anye.mc.st.helper.CommandList;
 import dev.anye.mc.st.helper.LoginHelper;
-import dev.anye.mc.st.sys.Currency;
+import dev.anye.mc.st.sys.currency.Currency;
 import dev.anye.mc.st.sys.EnchantmentExtract;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;

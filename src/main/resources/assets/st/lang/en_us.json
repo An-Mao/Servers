@@ -75,6 +75,8 @@
   "currency.st.player.config.error":"Player currency system is error",
   "shelf.st.item.config.error":"Item Shelf Config is error",
   "shelf.st.item.buy.error.not_have":"The item is empty",
+  "shelf.st.item.buy.success": "Buy Success",
+  "shelf.st.item.buy.failed": "Buy Failed",
 
 
 

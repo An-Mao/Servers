@@ -75,6 +75,8 @@
   "currency.st.player.config.error":"玩家货币系统异常",
   "shelf.st.item.config.error":"物品货架未配置或配置异常",
   "shelf.st.item.buy.error.not_have":"指定物品不存在",
+  "shelf.st.item.buy.success": "购买成功",
+  "shelf.st.item.buy.failed": "购买失败",
 
 
 

@@ -21,7 +21,7 @@ import dev.anye.mc.st.menu.ItemShelfMenu;
 import dev.anye.mc.st.menu.LoginMenu;
 import dev.anye.mc.st.menu.STMenu;
 import dev.anye.mc.st.menu.TrashBinContainer;
-import dev.anye.mc.st.sys.Currency;
+import dev.anye.mc.st.sys.currency.Currency;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
