@@ -5,11 +5,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.Config;
-import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import dev.anye.mc.st.config.black_list.BlackListConfig;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.command.CommandConfig;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.login.LoginConfig;
 import dev.anye.mc.st.config.login.LoginData;
 import dev.anye.mc.st.config.msg.MsgConfig;
@@ -193,13 +193,9 @@ public class GameEvent {
 		}
 	}
 	@SubscribeEvent
-	public static void onAnvil(AnvilUpdateEvent event){
-		if (event.getPlayer() instanceof ServerPlayer) {
-			Config.I.read(configData -> {
-				if (configData.enchantmentExtract) {
-					EnchantmentExtract.onUpdate(event, event.getLeft(), event.getRight());
-				}
-			});
+	public static void onAnvil(AnvilUpdateEvent event) {
+		if (event.getPlayer() instanceof ServerPlayer && Boolean.TRUE.equals(Config.I.read(configData -> configData.enchantmentExtract))) {
+			EnchantmentExtract.onUpdate(event, event.getLeft(), event.getRight());
 		}
 	}
 

@@ -83,7 +83,22 @@
 
 
 
-  "menu.st.st.trash.name": "Trash Bin",
+  "menu.st.st.trash.name": "Open Trash Bin",
   "menu.st.st.shelf.item.name": "Open Item Shelf",
-  "menu.st.shelf.item.title": "Item Shelf"
+  "menu.st.st.admin.name": "Open Admin Menu",
+
+
+  "menu.st.shelf.item.title": "Item Shelf",
+
+
+  "menu.st.admin.title": "Admin Menu",
+  "menu.st.admin.enchantment_extract": "Enable/Disable Enchantment Extract",
+  "menu.st.admin.enchantment_extract.state.enable": "Enable",
+  "menu.st.admin.enchantment_extract.state.disable": "Disable",
+
+  "menu.st.button.tips": "--",
+  "menu.st.button.previous_page": "Previous Page",
+  "menu.st.button.first_page": "First Page",
+  "menu.st.button.next_page": "Next Page",
+  "menu.st.button.home_page": "Home Page"
 }

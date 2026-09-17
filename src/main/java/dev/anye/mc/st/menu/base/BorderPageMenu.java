@@ -1,8 +1,6 @@
-package dev.anye.mc.st.menu;
+package dev.anye.mc.st.menu.base;
 
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.MenuType;
-import org.jspecify.annotations.Nullable;
 
 public abstract class BorderPageMenu extends FooterMenu{
 	protected BorderPageMenu(int containerId, Inventory playerInventory, int allItemNumber) {
@@ -25,7 +23,7 @@ public abstract class BorderPageMenu extends FooterMenu{
 		addItemSlot(1, this::xButton);
 		addItemSlot(2, this::xButton);
 		addItemSlot(3, this::xButton);
-		addItemSlot(4, this::xButton);
+		addItemSlot(4, this::homeButton);
 		addItemSlot(5, this::xButton);
 		addItemSlot(6, this::xButton);
 		addItemSlot(7, this::xButton);

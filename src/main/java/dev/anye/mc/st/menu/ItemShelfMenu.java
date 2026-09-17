@@ -2,13 +2,14 @@ package dev.anye.mc.st.menu;
 
 import com.mojang.logging.LogUtils;
 import dev.anye.mc.st.config.lang.Language;
+import dev.anye.mc.st.menu.base.BorderPageMenu;
+import dev.anye.mc.st.menu.button.SlotButton;
 import dev.anye.mc.st.sys.Currency;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.transfer.item.ItemResource;
@@ -17,11 +18,11 @@ import org.slf4j.Logger;
 
 import java.util.List;
 
-public class ItemShelfMenu extends PageMenu {
+public class ItemShelfMenu extends BorderPageMenu {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private List<ItemStack> stacks ;
 	public ItemShelfMenu(int id, Inventory playerInventory) {
-		super(MenuType.GENERIC_9x6, id,playerInventory, Currency.I.shelf().getItems().size(),28,true,45);
+		super( id,playerInventory, Currency.I.shelf().getItems().size());
 	}
 
 	public ItemStack getShelfItem(int index) {
@@ -37,7 +38,7 @@ public class ItemShelfMenu extends PageMenu {
 			for (int col = 0; col < 7; col++) {
 				int i = 10 + row * 9 + col;
 				int iii = ii;
-				this.addItemSlot(i,(x, y) -> new SlotButton<>(this.itemHandler,this.itemHandler::set,iii,x,y,player -> this.playerClick(player,iii),null));
+				this.addItemSlot(i,(x, y) -> new SlotButton(this.itemHandler,this.itemHandler::set,iii,x,y, player -> this.playerClick(player,iii)));
 				ii++;
 			}
 		}

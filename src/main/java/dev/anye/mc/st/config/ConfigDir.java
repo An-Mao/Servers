@@ -6,7 +6,7 @@ import dev.anye.core.system._File;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 
-public class ConfigDir {
+public final class ConfigDir {
 	public static final String PLAYER_CURRENCY = "Currency";
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -62,6 +62,7 @@ public class ConfigDir {
 		_File.checkAndCreateDir(SHELF_XP);
 	}
 
+	private ConfigDir(){}
 
 	public static String getPlayerDir(ServerPlayer serverPlayer){
 		return getPlayerDir(serverPlayer.getStringUUID());

@@ -5,11 +5,8 @@ import com.google.gson.reflect.TypeToken;
 import com.mojang.logging.LogUtils;
 import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.core.exception._IOException;
-import dev.anye.core.json._JsonConfig;
 import dev.anye.core.json._JsonConfigR;
-import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
-import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.helper.ItemHelper;
 import dev.anye.mc.st.helper.MsgHelper;
@@ -20,7 +17,6 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -117,8 +113,6 @@ public final class Shelf {
 					}
 					playerCurrency = PlayerCurrency.getPlayerCurrency(u,serverPlayer);
 					return playerCurrency.add(itemConfig.data().getTax(data.price),"sell item '" + key + "' 1");
-				}else {
-					MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.item.player.error.insufficient_funds");
 				}
 			}else {
 				MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.item.buy.error.not_have");

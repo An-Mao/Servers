@@ -1,8 +1,6 @@
 package dev.anye.mc.st.data_type;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import dev.anye.mc.st.ST;
 import dev.anye.mc.st.config.command.CommandConfig;
@@ -10,8 +8,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.permissions.PermissionCheck;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CommandData {

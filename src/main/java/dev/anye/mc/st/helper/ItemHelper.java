@@ -8,6 +8,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+
+import java.util.function.Consumer;
 
 public final class ItemHelper {
 	private ItemHelper(){}
@@ -37,5 +40,11 @@ public final class ItemHelper {
 
 	public static ItemStack jsonToItem(JsonElement json){
 		return ItemStack.CODEC.parse(JsonOps.INSTANCE,json).getOrThrow();
+	}
+
+	public static ItemResource resource(Item item,Consumer<ItemStack> consumer){
+		ItemStack stack = new ItemStack(item);
+		consumer.accept(stack);
+		return ItemResource.of(stack);
 	}
 }

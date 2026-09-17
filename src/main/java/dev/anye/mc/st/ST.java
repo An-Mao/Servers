@@ -28,12 +28,12 @@ public class ST {
 			.build();
 
 	static {
-		_Pack.writeFiles("assets/st/lang/", ConfigDir.LANGUAGE, ".json","en_us", "zh_cn");
+		_Pack.writeJsonFiles("assets/st/lang/", ConfigDir.LANGUAGE, "en_us", "zh_cn");
 		_Pack.writeFiles("assets/st/js/", ConfigDir.JAVASCRIPT, ".js", "TpaRequest");
 
 		Language.loadLanguage();
 
-		_Pack.writeFiles("assets/st/config/currency/entity/", ConfigDir.CURRENCY_ENTITY, ".json", "zombie@minecraft");
+		_Pack.writeJsonFiles("assets/st/config/currency/entity/", ConfigDir.CURRENCY_ENTITY, "zombie@minecraft");
 	}
 
 	public ST(IEventBus modEventBus, ModContainer modContainer) {

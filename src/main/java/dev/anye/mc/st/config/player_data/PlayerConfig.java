@@ -42,7 +42,6 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 
 	public static PlayerConfig get(String uuid) {
 		return new PlayerConfig(_File.getFilePath(ConfigDir.PLAYER_DATA, uuid + _SuffixCDT.JSON_SUFFIX));
-		//return I.getOrDefault(playerUUID, new PlayerConfig(_File.getFilePath(ConfigDir.PLAYER_DATA, playerUUID + ".json")));
 	}
 
 
@@ -72,9 +71,6 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 	public void setLang(String lang){
 		update(playerData -> playerData.setLang(lang));
 		save();
-	}
-
-	public void pullBack(PosData back) {
 	}
 
 	public @Nullable PosData getBack() {

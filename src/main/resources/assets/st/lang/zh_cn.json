@@ -78,7 +78,19 @@
 
 
 
-  "menu.st.st.trash.name": "垃圾桶",
+  "menu.st.st.trash.name": "翻找垃圾桶",
   "menu.st.st.shelf.item.name": "打开物品商店",
-  "menu.st.shelf.item.title": "物品商店"
+  "menu.st.st.admin.name": "打开管理员菜单",
+
+  "menu.st.shelf.item.title": "物品商店",
+  "menu.st.admin.title": "管理员菜单",
+  "menu.st.admin.enchantment_extract": "切换附魔提取功能状态",
+  "menu.st.admin.enchantment_extract.state.enable": "已启用",
+  "menu.st.admin.enchantment_extract.state.disable": "已禁用",
+
+  "menu.st.button.tips": "--",
+  "menu.st.button.previous_page": "上一页",
+  "menu.st.button.first_page": "第一页",
+  "menu.st.button.next_page": "下一页",
+  "menu.st.button.home_page": "主页"
 }

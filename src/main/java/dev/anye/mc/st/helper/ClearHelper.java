@@ -72,7 +72,7 @@ public class ClearHelper {
 	public static void clearItem(MinecraftServer server) {
 		if (isClearTrashBin) return;
 		isClearTrashBin = true;
-		if (TrashBinContainer.nowPlayer != null) TrashBinContainer.nowPlayer.closeContainer();
+		TrashBinContainer.close();
 		ClearConfig.ITEM_CLEAR.read(itemClearData -> {
 			if (itemClearData.clearTrash()) TrashBinContainer.SLOTS.clear();
 			int[] clears = {0};

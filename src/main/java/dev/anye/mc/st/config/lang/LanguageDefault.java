@@ -1,8 +1,5 @@
 package dev.anye.mc.st.config.lang;
 
-import dev.anye.mc.st.ST;
-import net.neoforged.fml.ModList;
-
 import java.util.HashMap;
 import java.util.Map;
 

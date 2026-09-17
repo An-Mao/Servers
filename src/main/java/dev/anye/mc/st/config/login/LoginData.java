@@ -1,8 +1,5 @@
 package dev.anye.mc.st.config.login;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public record LoginData(
 	boolean enable,
 	String success,

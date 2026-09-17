@@ -1,4 +1,4 @@
-package dev.anye.mc.st.menu;
+package dev.anye.mc.st.menu.base;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -27,7 +27,7 @@ public abstract class FooterMenu extends PageMenu{
 		addItemSlot(47,this::xButton);
 
 		addItemSlot(48,this::xButton);
-		addItemSlot(49,this::homeButton);
+		addItemSlot(49,this::firstButton);
 		addItemSlot(50,this::xButton);
 
 		addItemSlot(51,this::xButton);

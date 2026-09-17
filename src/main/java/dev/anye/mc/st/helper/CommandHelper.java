@@ -4,13 +4,13 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import dev.anye.mc.st.config.Config;
-import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import dev.anye.mc.st.config.black_list.BlackListConfig;
 import dev.anye.mc.st.config.clear.ClearConfig;
 import dev.anye.mc.st.config.command.CommandConfig;
 import dev.anye.mc.st.config.command.CommandData;
 import dev.anye.mc.st.config.currency.PlayerCurrency;
+import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.config.login_reward.LoginReward;
 import dev.anye.mc.st.config.login_reward.LoginRewardData;
 import dev.anye.mc.st.config.msg.MsgConfig;
@@ -329,10 +329,7 @@ public class CommandHelper {
 
 	public static int st(CommandContext<CommandSourceStack> context) {
 		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
-			serverPlayer.openMenu(new SimpleMenuProvider(
-					(id, playerInventory, player) -> new STMenu(id, playerInventory),
-					Language.getComponent(serverPlayer,"trash.menu.title")
-			));
+			STMenu.open(serverPlayer);
 			return SUCCESS;
 		}
 		return FAILED;
