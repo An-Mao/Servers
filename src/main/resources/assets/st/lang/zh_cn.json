@@ -72,16 +72,25 @@
   "shelf.st.item.player.error.insufficient_funds":"货币不足",
   "shelf.st.item.player.error.currency_overrun":"货币超限",
   "shelf.st.item.player.error.price":"货币数量不符合规范",
+
+  "shelf.st.entity.player.error.insufficient_funds":"货币不足",
+  "shelf.st.entity.player.error.price":"货币数量不符合规范",
+  "shelf.st.entity.buy.error.not_have":"指定商品不存在",
+
   "currency.st.player.config.error":"玩家货币系统异常",
   "shelf.st.item.config.error":"物品货架未配置或配置异常",
   "shelf.st.item.buy.error.not_have":"指定物品不存在",
   "shelf.st.item.buy.success": "购买成功",
   "shelf.st.item.buy.failed": "购买失败",
+  "shelf.st.shelf.buy.success": "购买成功",
+  "shelf.st.shelf.buy.failed": "购买失败",
 
 
 
   "menu.st.st.trash.name": "翻找垃圾桶",
   "menu.st.st.shelf.item.name": "打开物品商店",
+  "menu.st.st.shelf.system.item.name": "打开系统物品商店",
+  "menu.st.st.shelf.player.entity.name": "打开实体商店",
   "menu.st.st.admin.name": "打开管理员菜单",
 
   "menu.st.shelf.item.title": "物品商店",

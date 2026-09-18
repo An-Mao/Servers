@@ -40,6 +40,9 @@ public final class ConfigDir {
 	public static final String SHELF_SYSTEM_ITEM_LOG = _File.getFilePath(CURRENCY_SHELF, "SystemItemLog");
 
 	public static final String SHELF_ENTITY = _File.getFilePath(CURRENCY_SHELF, "Entity");
+	public static final String SHELF_ENTITY_LOG = _File.getFilePath(CURRENCY_SHELF, "EntityLog");
+
+
 	public static final String SHELF_XP = _File.getFilePath(CURRENCY_SHELF, "Xp");
 
 
@@ -70,6 +73,7 @@ public final class ConfigDir {
 
 		_File.checkAndCreateDir(SHELF_ITEM_LOG);
 		_File.checkAndCreateDir(SHELF_ENTITY);
+		_File.checkAndCreateDir(SHELF_ENTITY_LOG);
 		_File.checkAndCreateDir(SHELF_XP);
 	}
 

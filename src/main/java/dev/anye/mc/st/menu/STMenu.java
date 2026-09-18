@@ -6,6 +6,7 @@ import dev.anye.mc.st.config.lang.Language;
 import dev.anye.mc.st.helper.ItemHelper;
 import dev.anye.mc.st.menu.base.BorderPageMenu;
 import dev.anye.mc.st.menu.button.SlotButton;
+import dev.anye.mc.st.sys.currency.Currency;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
@@ -32,6 +33,11 @@ public final class STMenu extends BorderPageMenu {
 	}
 
 	int itemIndex;
+
+	@Override
+	protected void pageInitLoad() {
+		pageRefresh();
+	}
 
 	@Override
 	public void addInventory() {
@@ -63,10 +69,21 @@ public final class STMenu extends BorderPageMenu {
 		stack = new ItemStack(Items.EMERALD);
 		stack.set(DataComponents.CUSTOM_NAME,Language.getComponent(serverPlayer,"menu.st.st.shelf.item.name"));
 		this.itemHandler.set(itemIndex, ItemResource.of(stack.copy()),1);
-		this.addItemSlot(20,(x, y) -> new SlotButton(this.itemHandler,this.itemHandler::set,itemIndex,x,y, _ -> ItemShelfMenu.open(serverPlayer)));
+		this.addItemSlot(20,(x, y) -> new SlotButton(this.itemHandler,this.itemHandler::set,itemIndex,x,y, _ -> ShelfMenu.open(serverPlayer, Currency.I.playerItemShelf())));
+
+
+		itemIndex ++;
+		stack = new ItemStack(Items.EMERALD);
+		stack.set(DataComponents.CUSTOM_NAME,Language.getComponent(serverPlayer,"menu.st.st.shelf.system.item.name"));
+		this.itemHandler.set(itemIndex, ItemResource.of(stack.copy()),1);
+		this.addItemSlot(21,(x, y) -> new SlotButton(this.itemHandler,this.itemHandler::set,itemIndex,x,y, _ -> ShelfMenu.open(serverPlayer,Currency.I.systemItemShelf())));
+
+		itemIndex ++;
+		stack = new ItemStack(Items.EMERALD);
+		stack.set(DataComponents.CUSTOM_NAME,Language.getComponent(serverPlayer,"menu.st.st.shelf.player.entity.name"));
+		this.itemHandler.set(itemIndex, ItemResource.of(stack.copy()),1);
+		this.addItemSlot(22,(x, y) -> new SlotButton(this.itemHandler,this.itemHandler::set,itemIndex,x,y, _ -> ShelfMenu.open(serverPlayer,Currency.I.playerEntityShelf())));
 /*
-		this.addItemSlot(21,this::xButton);
-		this.addItemSlot(22,this::xButton);
 		this.addItemSlot(23,this::xButton);
 		this.addItemSlot(24,this::xButton);
 		this.addItemSlot(25,this::xButton);

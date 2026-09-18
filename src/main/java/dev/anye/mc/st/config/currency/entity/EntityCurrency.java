@@ -12,7 +12,7 @@ public class EntityCurrency extends _JsonConfigR<EntityCurrencyData> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	public EntityCurrency(String entity) {
-		super(path(entity), EntityCurrencyData.DEFAULT, new TypeToken<>(){});
+		super(path(entity), EntityCurrencyData.DEFAULT, new TypeToken<>(){},false);
 	}
 
 

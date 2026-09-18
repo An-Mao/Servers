@@ -83,12 +83,14 @@ public abstract class PageMenu extends AbstractContainerMenu {
 			}
 		}
 		//触发一次页面刷新
-		pageRefresh();
+		pageInitLoad();
 
 		//----------------------------------------------
 		//将缓存的itemSlot应用
 		setAllSlots();
 	}
+
+	protected abstract void pageInitLoad();
 
 	/**
 	 * 用EMPTY填充itemHandler，可以解决一些超限问题。

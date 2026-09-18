@@ -7,8 +7,11 @@ import dev.anye.core.system._File;
 import dev.anye.core.time.FastDateTime;
 import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.config.currency.PlayerCurrency;
-import dev.anye.mc.st.config.currency.shelf.*;
+import dev.anye.mc.st.config.currency.shelf.ShelfItem;
+import dev.anye.mc.st.config.currency.shelf.ShelfItemConfig;
+import dev.anye.mc.st.config.currency.shelf.ShelfItemData;
 import dev.anye.mc.st.config.lang.Language;
+import dev.anye.mc.st.data_type.IShelf;
 import dev.anye.mc.st.helper.MsgHelper;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -28,12 +31,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class PlayerShelf {
+public final class PlayerItemShelf implements IShelf<ItemStack> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private final Map<String, ShelfItemData> items = new LinkedHashMap<>();
 	private final ShelfItemConfig itemConfig = new ShelfItemConfig();
 
-	public PlayerShelf(){
+	public PlayerItemShelf(){
 		loadItems();
 	}
 
@@ -51,22 +54,20 @@ public final class PlayerShelf {
 		LOGGER.debug("load shelf item count : {}",items.size());
 	}
 
-	public Map<String,ShelfItemData> getItems(){
-		return items;
-	}
-	public int getItemsCount(){
+	@Override
+	public int count(){
 		return items.size();
 	}
 
 
-	public List<ItemStack> getShelfItems(){
+	@Override
+	public List<ItemStack> all(ServerPlayer serverPlayer){
 		FastDateTime fastDateTime = new FastDateTime();
 		List<ItemStack> playerItems = new ArrayList<>();
 		items.forEach((uuid, data) -> {
-			ItemStack itemStack = data.getItem();
+			ItemStack itemStack = data.getItem(serverPlayer.level());
 
-			CustomData.update(DataComponents.CUSTOM_DATA,itemStack, compoundTag -> compoundTag.putString("shelf.st.item.uuid",uuid));
-
+			CustomData.update(DataComponents.CUSTOM_DATA,itemStack, compoundTag -> compoundTag.putString(idKey(),uuid));
 
 
 			ItemLore itemLore = itemStack.getOrDefault(DataComponents.LORE,ItemLore.EMPTY).withLineAdded(Component.literal(data.price() + " ").append(Language.getComponent(null,"currency.st.name")).withColor(TextColor.GOLD));
@@ -79,7 +80,7 @@ public final class PlayerShelf {
 		return playerItems;
 	}
 
-	public boolean addItem(@NotNull ServerPlayer serverPlayer, ItemStack stack, double price){
+	public boolean sell(@NotNull ServerPlayer serverPlayer, ItemStack stack, double price){
 		if (itemConfigIsLoad()) {
 			if (!itemConfig.data().checkPrice(price)) {
 				MsgHelper.sendMsgToPlayerF(serverPlayer, "shelf.st.item.player.error.price");
@@ -113,24 +114,24 @@ public final class PlayerShelf {
 	}
 
 
-	public boolean buyItem(ServerPlayer serverPlayer,String key){
+	public boolean buy(ServerPlayer serverPlayer, String key){
 		if (itemConfigIsLoad() && items.containsKey(key)){
 			ShelfItemData data = items.get(key);
 			if (data.count() > 0) {
 				PlayerCurrency playerCurrency = PlayerCurrency.getPlayerCurrency(serverPlayer);
 				String u = data.playerUUID();
 				if (playerCurrency.sub(data.price(), "buy item '" + key + "' 1")) {
-					ItemStack stack = data.getItem();
+					ItemStack stack = data.getItem(serverPlayer.level());
 					stack.setCount(1);
 					serverPlayer.getInventory().placeItemBackInInventory(stack);
 					int count = data.count() - 1;
 					if (count < 1) {
-						removeItem(key);
+						remove(key);
 					}else {
 						subItem(key,data,count);
 					}
 					playerCurrency = PlayerCurrency.getPlayerCurrency(u,serverPlayer);
-					return playerCurrency.add(itemConfig.data().getTax(data.price()),"sell item '" + key + "' 1");
+					return playerCurrency.add(data.price() - itemConfig.data().getTax(data.price()),"sell item '" + key + "' 1");
 				}
 			}else {
 				MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.item.buy.error.not_have");
@@ -141,7 +142,8 @@ public final class PlayerShelf {
 		return false;
 	}
 
-	public void removeItem(String key){
+	@Override
+	public void remove(String key){
 		items.remove(key);
 		try {
 			Files.move(Paths.get(_File.getFilePath(ConfigDir.SHELF_ITEM, key + _SuffixCDT.JSON_SUFFIX)),Paths.get(_File.getFilePath(ConfigDir.SHELF_ITEM_LOG, key + _SuffixCDT.JSON_SUFFIX)));

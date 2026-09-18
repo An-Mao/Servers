@@ -3,6 +3,7 @@ package dev.anye.mc.st.helper;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.logging.LogUtils;
 import dev.anye.mc.st.config.Config;
 import dev.anye.mc.st.config.ban_item.BanItemConfig;
 import dev.anye.mc.st.config.black_list.BlackListConfig;
@@ -17,15 +18,16 @@ import dev.anye.mc.st.config.msg.MsgConfig;
 import dev.anye.mc.st.config.player$group.PlayerGroupConfig;
 import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.data_type.PosData;
-import dev.anye.mc.st.menu.ItemShelfMenu;
 import dev.anye.mc.st.menu.LoginMenu;
 import dev.anye.mc.st.menu.STMenu;
+import dev.anye.mc.st.menu.ShelfMenu;
 import dev.anye.mc.st.menu.TrashBinContainer;
 import dev.anye.mc.st.sys.currency.Currency;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Relative;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,7 @@ import java.util.UUID;
 public class CommandHelper {
 	private static final int FAILED = 0;
 	private static final int SUCCESS = Command.SINGLE_SUCCESS;
+	private static final Logger LOGGER = LogUtils.getLogger();
 
 	public static int trash(CommandContext<CommandSourceStack> context) {
 		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
@@ -306,9 +309,9 @@ public class CommandHelper {
 		return FAILED;
 	}
 
-	public static int shelf(CommandContext<CommandSourceStack> context) {
+	public static int playerItemShelf(CommandContext<CommandSourceStack> context) {
 		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
-			ItemShelfMenu.open(serverPlayer);
+			ShelfMenu.open(serverPlayer,Currency.I.playerItemShelf());
 			return SUCCESS;
 		}
 		return FAILED;
@@ -331,6 +334,28 @@ public class CommandHelper {
 		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
 			STMenu.open(serverPlayer);
 			return SUCCESS;
+		}
+		return FAILED;
+	}
+
+	public static int outputHandItem(CommandContext<CommandSourceStack> context) {
+		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
+			LOGGER.info("item data => {}",ItemHelper.itemToJson(serverPlayer.getMainHandItem(),serverPlayer.level().registryAccess()));
+			return SUCCESS;
+		}
+		return FAILED;
+	}
+
+	public static int sellMob(CommandContext<CommandSourceStack> context) {
+		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
+			double price = DoubleArgumentType.getDouble(context,"price");
+			if (price > 0) {
+				if (Currency.I.sellMob(serverPlayer, price)) {
+					sendSuccess(context, "sell.command.mob.success");
+					return SUCCESS;
+				}
+			}
+			sendSuccess(context,"sell.command.mob.failed");
 		}
 		return FAILED;
 	}

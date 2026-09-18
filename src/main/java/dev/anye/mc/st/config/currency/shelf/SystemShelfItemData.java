@@ -2,6 +2,7 @@ package dev.anye.mc.st.config.currency.shelf;
 
 import com.google.gson.JsonElement;
 import dev.anye.mc.st.helper.ItemHelper;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 public record SystemShelfItemData(BigDecimal price, int count, int autoReplenishment, int purchaseLimit, int cooldown, JsonElement data) {
 
 
-	public ItemStack getItem(){
-		return ItemHelper.jsonToItem(data);
+	public ItemStack getItem(ServerLevel level){
+		return ItemHelper.jsonToItem(data,level.registryAccess());
 	}
 }

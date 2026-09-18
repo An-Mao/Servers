@@ -45,7 +45,10 @@ public class TrashBinContainer extends FooterMenu {
 	}
 
 
-
+	@Override
+	protected void pageInitLoad() {
+		pageRefresh();
+	}
 
 	@Override
 	public void addInventory() {

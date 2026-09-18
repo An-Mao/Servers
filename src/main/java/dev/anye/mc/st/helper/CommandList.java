@@ -46,7 +46,8 @@ public class CommandList {
 		commands.add(CommandData.create(CommandData.Permission_Player, CommandHelper::my,"my"));
 
 
-		commands.add(CommandData.create(CommandHelper::shelf,"shelf"));
+		commands.add(CommandData.create(CommandHelper::playerItemShelf,"shelf"));
+		commands.add(CommandData.create(CommandHelper::outputHandItem,"test","hand_item"));
 	}
 
 	public void register(){

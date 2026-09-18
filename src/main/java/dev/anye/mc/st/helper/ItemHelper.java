@@ -3,8 +3,10 @@ package dev.anye.mc.st.helper;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -34,12 +36,12 @@ public final class ItemHelper {
 		return getKey(item).toString();
 	}
 
-	public static JsonElement itemToJson(ItemStack item){
-		return ItemStack.CODEC.encodeStart(JsonOps.INSTANCE,item).getOrThrow();
+	public static JsonElement itemToJson(ItemStack item, HolderLookup.Provider lookupProvider){
+		return ItemStack.CODEC.encodeStart(RegistryOps.create(JsonOps.INSTANCE, lookupProvider), item).getOrThrow();
 	}
 
-	public static ItemStack jsonToItem(JsonElement json){
-		return ItemStack.CODEC.parse(JsonOps.INSTANCE,json).getOrThrow();
+	public static ItemStack jsonToItem(JsonElement json, HolderLookup.Provider lookupProvider){
+		return ItemStack.CODEC.parse(RegistryOps.create(JsonOps.INSTANCE, lookupProvider),json).getOrThrow();
 	}
 
 	public static ItemResource resource(Item item,Consumer<ItemStack> consumer){

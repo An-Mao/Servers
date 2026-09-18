@@ -1,7 +1,6 @@
 package dev.anye.mc.st.config.player_data;
 
 import com.google.gson.reflect.TypeToken;
-import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
@@ -11,8 +10,6 @@ import dev.anye.mc.st.helper.MsgHelper;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,7 +20,7 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 		super(filePath, new PlayerData(), new TypeToken<>() {});
 	}
 
-
+/*
 	public static Map<String, PlayerConfig> loadPlayerData() {
 		Map<String, PlayerConfig> abc = new HashMap<>();
 		List<Path> jsonFiles = _File.getFiles(ConfigDir.PLAYER_DATA, _SuffixCDT.JSON_SUFFIX);
@@ -34,14 +31,14 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 		}
 		return abc;
 
-	}
+	}*/
 
 	public static PlayerConfig get(ServerPlayer player) {
 		return get(player.getStringUUID());
 	}
 
 	public static PlayerConfig get(String uuid) {
-		return new PlayerConfig(_File.getFilePath(ConfigDir.PLAYER_DATA, uuid + _SuffixCDT.JSON_SUFFIX));
+		return new PlayerConfig(_File.getFilePath(ConfigDir.getPlayerDataDir(uuid), "player.json"));
 	}
 
 

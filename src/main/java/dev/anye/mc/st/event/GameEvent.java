@@ -17,8 +17,8 @@ import dev.anye.mc.st.config.player_data.PlayerConfig;
 import dev.anye.mc.st.helper.CommandHelper;
 import dev.anye.mc.st.helper.CommandList;
 import dev.anye.mc.st.helper.LoginHelper;
-import dev.anye.mc.st.sys.currency.Currency;
 import dev.anye.mc.st.sys.EnchantmentExtract;
+import dev.anye.mc.st.sys.currency.Currency;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
@@ -78,7 +78,18 @@ public class GameEvent {
 					CommandHelper.sendSuccess(context,"set_lang.command.failed");
 					return 0;
 				})));
-		event.getDispatcher().register(Commands.literal("sell").then(Commands.literal("item").then(Commands.argument("price", DoubleArgumentType.doubleArg(0)).executes(CommandHelper::sellItem))));
+		event.getDispatcher().register(Commands.literal("sell")
+				.then(Commands.literal("item")
+						.then(
+								Commands.argument("price", DoubleArgumentType.doubleArg(0)).executes(CommandHelper::sellItem)
+						)
+				)
+				.then(Commands.literal("mob")
+						.then(
+								Commands.argument("price", DoubleArgumentType.doubleArg(0)).executes(CommandHelper::sellMob)
+						)
+				)
+		);
 	}
 
 	public static int WAIT = 0;

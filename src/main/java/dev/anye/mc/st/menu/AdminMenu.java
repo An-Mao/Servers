@@ -33,6 +33,11 @@ public class AdminMenu extends BorderPageMenu {
 	}
 
 	@Override
+	protected void pageInitLoad() {
+
+	}
+
+	@Override
 	public void addInventory() {
 		itemHandler.set(0, ItemHelper.resource(Items.ANVIL,item -> {
 			item.set(DataComponents.CUSTOM_NAME,Language.getComponent(serverPlayer,"menu.st.admin.enchantment_extract"));

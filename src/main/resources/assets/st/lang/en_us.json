@@ -72,11 +72,19 @@
   "shelf.st.item.player.error.insufficient_funds":"Insufficient funds",
   "shelf.st.item.player.error.currency_overrun":"Currency overrun",
   "shelf.st.item.player.error.price":"Currency range error",
+
+  "shelf.st.entity.player.error.price":"Currency range error",
+  "shelf.st.entity.player.error.insufficient_funds":"Insufficient funds",
+  "shelf.st.entity.buy.error.not_have":"The item is empty",
+
+
   "currency.st.player.config.error":"Player currency system is error",
   "shelf.st.item.config.error":"Item Shelf Config is error",
   "shelf.st.item.buy.error.not_have":"The item is empty",
   "shelf.st.item.buy.success": "Buy Success",
   "shelf.st.item.buy.failed": "Buy Failed",
+  "shelf.st.shelf.buy.success": "Buy Success",
+  "shelf.st.shelf.buy.failed": "Buy Failed",
 
 
 
@@ -87,6 +95,9 @@
 
   "menu.st.st.trash.name": "Open Trash Bin",
   "menu.st.st.shelf.item.name": "Open Item Shelf",
+  "menu.st.st.shelf.system.item.name": "Open System Item Shelf",
+  "menu.st.st.shelf.player.entity.name": "Open Entity Shelf",
+
   "menu.st.st.admin.name": "Open Admin Menu",
 
 

@@ -6,15 +6,20 @@ import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
 import dev.anye.mc.st.config.currency.PlayerCurrency;
 import dev.anye.mc.st.config.currency.shelf.*;
+import dev.anye.mc.st.config.lang.Language;
+import dev.anye.mc.st.data_type.IShelf;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
 import org.slf4j.Logger;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-public final class SystemShelf {
+public final class SystemItemShelf implements IShelf<ItemStack> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private final Map<String, SystemShelfItemData> items = new LinkedHashMap<>();
 	/**
@@ -22,7 +27,7 @@ public final class SystemShelf {
 	 */
 	private final Map<String, SystemShelfItemLog> logs = new HashMap<>();
 
-	public SystemShelf(){
+	public SystemItemShelf(){
 		loadSystemItems();
 	}
 
@@ -31,11 +36,15 @@ public final class SystemShelf {
 		return logs.computeIfAbsent(itemKey, _ -> new SystemShelfItemLog(itemKey));
 	}
 
+	@Override
+	public int count(){
+		return items.size();
+	}
 
 
 	public void loadSystemItems(){
 		items.clear();
-		_File.getFiles(ConfigDir.SHELF_ITEM, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
+		_File.getFiles(ConfigDir.SHELF_SYSTEM_ITEM, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
 			String uuid = _File.getFileNameWithoutExtension(path.getFileName().toString());
 			SystemShelfItemIO item = new SystemShelfItemIO(uuid);
 			if (item.data() != null){
@@ -45,7 +54,31 @@ public final class SystemShelf {
 		LOGGER.debug("load system shelf item count : {}", items.size());
 	}
 
-	public void buyItem(ServerPlayer serverPlayer,String itemKey){
+	@Override
+	public List<ItemStack> all(ServerPlayer serverPlayer){
+		List<ItemStack> sysItems = new ArrayList<>();
+
+		items.forEach((uuid, data) -> {
+			ItemStack itemStack = data.getItem(serverPlayer.level());
+
+			CustomData.update(DataComponents.CUSTOM_DATA,itemStack, compoundTag -> compoundTag.putString(idKey(),uuid));
+
+			ItemLore itemLore = itemStack.getOrDefault(DataComponents.LORE,ItemLore.EMPTY).withLineAdded(Component.literal(data.price() + " ").append(Language.getComponent(serverPlayer,"currency.st.name")).withColor(TextColor.GOLD));
+
+			itemStack.set(DataComponents.LORE,itemLore);
+
+			sysItems.add(itemStack);
+		});
+		return sysItems;
+	}
+
+	@Override
+	public boolean sell(ServerPlayer serverPlayer, ItemStack target, double price) {
+		return false;
+	}
+
+	@Override
+	public boolean buy(ServerPlayer serverPlayer, String itemKey){
 		SystemShelfItemData data = items.get(itemKey);
 		if (data != null){
 			SystemShelfItemLog log = getLog(itemKey);
@@ -53,26 +86,32 @@ public final class SystemShelf {
 			if (logData.count() >= data.count()){
 				if (data.autoReplenishment() > 0){
 					if (System.currentTimeMillis() - logData.lastTime() < data.autoReplenishment()){
-						return;
+						return false;
 					}else {
-						logData = new SystemShelfItemLogData(logData.count(), System.currentTimeMillis());
+						logData = new SystemShelfItemLogData(0, System.currentTimeMillis());
 					}
-				}else return;
+				}else return false;
 			}
-			if (buyItem(serverPlayer,itemKey,data)){
+			if (buy(serverPlayer,itemKey,data)){
 				SystemShelfItemLogData newData = new SystemShelfItemLogData(logData.count() + 1, logData.lastTime());
 				log.setData(newData);
 				log.save();
+				return true;
 			}
 		}
+		return false;
 	}
 
-	public boolean buyItem(ServerPlayer serverPlayer, String itemKey, SystemShelfItemData data){
+	@Override
+	public void remove(String key) {
+	}
+
+	private boolean buy(ServerPlayer serverPlayer, String itemKey, SystemShelfItemData data){
 		PlayerSystemShelfItemLog playerSystemShelfItemLog = new PlayerSystemShelfItemLog(serverPlayer,itemKey);
 		if (playerSystemShelfItemLog.checkAndAdd(data)){
 			PlayerCurrency playerCurrency = PlayerCurrency.getPlayerCurrency(serverPlayer);
 			if (playerCurrency.sub(data.price(), "buy item '" + itemKey + "' 1")) {
-				ItemStack stack = data.getItem();
+				ItemStack stack = data.getItem(serverPlayer.level());
 				stack.setCount(1);
 				serverPlayer.getInventory().placeItemBackInInventory(stack);
 				return true;

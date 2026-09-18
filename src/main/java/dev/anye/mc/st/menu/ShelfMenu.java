@@ -1,22 +1,34 @@
 package dev.anye.mc.st.menu;
 
-/*
-public class ItemShelfMenu extends BorderPageMenu {
+import com.mojang.logging.LogUtils;
+import dev.anye.mc.st.config.lang.Language;
+import dev.anye.mc.st.data_type.IShelf;
+import dev.anye.mc.st.helper.MsgHelper;
+import dev.anye.mc.st.menu.base.BorderPageMenu;
+import dev.anye.mc.st.menu.button.SlotButton;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+
+import java.util.List;
+
+public class ShelfMenu extends BorderPageMenu {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private final boolean system;
+	private final IShelf<?> merchandise;
 	private List<ItemStack> stacks ;
 
-	public ItemShelfMenu(int id, Inventory playerInventory,boolean system) {
-		super(id,playerInventory,getCount(system));
-		this.system = system;
+	public ShelfMenu(int id, Inventory playerInventory, IShelf<?> merchandise) {
+		super(id,playerInventory,merchandise.count());
+		this.merchandise = merchandise;
 		pageRefresh();
 	}
-
-	public static int getCount(boolean system){
-		if (system) return Currency.I.systemItemShelf().count();
-		return Currency.I.playerItemShelf().count();
-	}
-
 
 
 	public ItemStack getShelfItem(int index) {
@@ -26,9 +38,7 @@ public class ItemShelfMenu extends BorderPageMenu {
 
 
 	@Override
-	protected void pageInitLoad() {
-
-	}
+	protected void pageInitLoad() {}
 
 	@Override
 	public void addInventory(){
@@ -51,9 +61,10 @@ public class ItemShelfMenu extends BorderPageMenu {
 				return;
 			}
 			stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).update(compoundTag -> {
-				String uuid = compoundTag.getString(system ? "shelf.st.system.item.uuid":"shelf.st.item.uuid").orElse("");
-				if (uuid.isBlank())return;
-				MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.item.buy." + (Currency.I.buy(player1,uuid,system) ? "success":"failed"));
+
+				String uuid = compoundTag.getString(merchandise.idKey()).orElse("");
+				if (uuid.isBlank()) return;
+				MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.shelf.buy." + (merchandise.buy(player1,uuid) ? "success":"failed"));
 			});
 		}
 	}
@@ -65,7 +76,7 @@ public class ItemShelfMenu extends BorderPageMenu {
 
 	@Override
 	public void pageRefresh() {
-		stacks = Currency.I.getShelfItems(this.serverPlayer, system);
+		stacks = merchandise.all(serverPlayer);
 
 		int pageOffset = this.pageItemNumber * this.pageIndex;
 		for (int i = 0; i < itemHandler.size(); i++) {
@@ -80,12 +91,10 @@ public class ItemShelfMenu extends BorderPageMenu {
 		return i + pageOffset;
 	}
 
-	public static void open(ServerPlayer serverPlayer,boolean system){
+	public static void open(ServerPlayer serverPlayer,IShelf<?> merchandise){
 		serverPlayer.openMenu(new SimpleMenuProvider(
-				(id, playerInventory, _) -> new ItemShelfMenu(id, playerInventory,system),
+				(id, playerInventory, _) -> new ShelfMenu(id, playerInventory,merchandise),
 				Language.getComponent(serverPlayer,"menu.st.shelf.item.title")
 		));
 	}
 }
-
- */

@@ -2,6 +2,7 @@ package dev.anye.mc.st.config.currency.shelf;
 
 import com.google.gson.JsonElement;
 import dev.anye.mc.st.helper.ItemHelper;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -15,13 +16,10 @@ import net.minecraft.world.item.ItemStack;
  */
 public record ShelfItemData (String playerUUID, int count, double price, JsonElement data, long time){
 	public ShelfItemData(ServerPlayer serverPlayer, double price, ItemStack stack){
-		this(serverPlayer.getStringUUID(),price,stack);
+		this(serverPlayer.getStringUUID(),stack.count(),price, ItemHelper.itemToJson(stack,serverPlayer.level().registryAccess()),System.currentTimeMillis());
 	}
-	public ShelfItemData(String playerUUID, double price,ItemStack stack){
-		this(playerUUID,stack.count(),price, ItemHelper.itemToJson(stack),System.currentTimeMillis());
-	}
-	public ItemStack getItem(){
-		return ItemHelper.jsonToItem(data);
+	public ItemStack getItem(ServerLevel serverLevel){
+		return ItemHelper.jsonToItem(data,serverLevel.registryAccess());
 	}
 
 	public ShelfItemData copy(int newCount){
