@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 public class EntityCurrency extends _JsonConfigR<EntityCurrencyData> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	public EntityCurrency(String entity) {
-		super(path(entity), EntityCurrencyData.DEFAULT, new TypeToken<>(){},false);
+	public EntityCurrency(String entity, EntityCurrencyData entityCurrencyData) {
+		super(path(entity),entityCurrencyData, new TypeToken<>(){},false);
 	}
 
 

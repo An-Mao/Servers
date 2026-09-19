@@ -15,7 +15,7 @@ import java.util.Map;
 public class EntityCurrencies {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private final Map<String,EntityCurrencyData> entities = new HashMap<>();
-	private final Map<String,PlayerEntityCurrency> player = new HashMap<>();
+	private final Map<String,Map<String,PlayerEntityCurrency>> player = new HashMap<>();
 	public EntityCurrencies(){
 		reload();
 	}
@@ -26,29 +26,39 @@ public class EntityCurrencies {
 
 	public void loadEntities(){
 		entities.clear();
-		_File.getFiles(ConfigDir.SHELF_ENTITY, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
+		_File.getFiles(ConfigDir.CURRENCY_ENTITY, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
 			String uuid = _File.getFileNameWithoutExtension(path.getFileName().toString());
-			//ConfigDir.SHELF_ITEM,path.getFileName().toString()
-			EntityCurrency item = new EntityCurrency(uuid);
-			if (item.data() != null){
-				entities.put(uuid,item.data());
+			EntityCurrency entityCurrency = new EntityCurrency(uuid,EntityCurrencyData.DEFAULT);
+			if (entityCurrency.data() != null){
+				entities.put(uuid,entityCurrency.data());
 			}
 		});
 		LOGGER.debug("load shelf item count : {}", entities.size());
 	}
 
-	public PlayerEntityCurrency getPlayer(ServerPlayer serverPlayer){
-		return getPlayer(serverPlayer.getStringUUID());
+	public PlayerEntityCurrency getPlayer(ServerPlayer serverPlayer,String eid){
+		return getPlayer(serverPlayer.getStringUUID(),eid);
 	}
-	public PlayerEntityCurrency getPlayer(String uuid){
-		return player.computeIfAbsent(uuid, _ -> new PlayerEntityCurrency(uuid));
+	public PlayerEntityCurrency getPlayer(String uuid,String eid){
+		/*if (!player.containsKey(uuid)){
+			player.put(uuid,new HashMap<>());
+		}
+		if (!player.get(uuid).containsKey(eid)){
+			player.get(uuid).put(eid,new PlayerEntityCurrency(uuid,eid));
+		}
+		return player.get(uuid).get(eid);*/
+		return player.computeIfAbsent(uuid, _ -> new HashMap<>()).computeIfAbsent(eid,_ -> new PlayerEntityCurrency(uuid,eid));
 	}
 
 	public EntityCurrencyData get(LivingEntity entity){
 		return get(getEid(entity));
 	}
 	public EntityCurrencyData get(String entity){
-		return entities.computeIfAbsent(entity, _ -> new EntityCurrency(entity).data());
+		return entities.computeIfAbsent(entity, _ -> {
+			EntityCurrency entityCurrency = new EntityCurrency(entity,null);
+			if (entityCurrency.data() != null) return entityCurrency.data();
+			return EntityCurrencyData.DEFAULT;
+		});
 	}
 	public static String getEid(LivingEntity entity){
 		return EntityHelper.getEntityRegStringIDWithX(entity,"@");

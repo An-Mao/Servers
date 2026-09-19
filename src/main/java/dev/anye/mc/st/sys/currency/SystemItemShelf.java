@@ -44,7 +44,7 @@ public final class SystemItemShelf implements IShelf<ItemStack> {
 
 	public void loadSystemItems(){
 		items.clear();
-		_File.getFiles(ConfigDir.SHELF_SYSTEM_ITEM, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
+		_File.getFiles(ConfigDir.CURRENCY_SHELF_SYSTEM_ITEM, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
 			String uuid = _File.getFileNameWithoutExtension(path.getFileName().toString());
 			SystemShelfItemIO item = new SystemShelfItemIO(uuid);
 			if (item.data() != null){

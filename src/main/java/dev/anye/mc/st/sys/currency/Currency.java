@@ -8,13 +8,12 @@ import dev.anye.mc.st.config.currency.entity.EntityCurrencies;
 import dev.anye.mc.st.config.currency.entity.EntityCurrencyData;
 import dev.anye.mc.st.config.currency.entity.PlayerEntityCurrency;
 import dev.anye.mc.st.config.currency.entity.PlayerEntityCurrencyData;
+import dev.anye.mc.st.helper.EntityHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.AABB;
 import org.slf4j.Logger;
 
 import java.math.BigDecimal;
@@ -37,6 +36,7 @@ public final class Currency {
 		config = new CurrencyConfig();
 		blockCurrency = new BlockCurrency();
 		entityCurrencies = new EntityCurrencies();
+
 		playerItemShelf = new PlayerItemShelf();
 		systemItemShelf = new SystemItemShelf();
 		playerEntityShelf = new PlayerEntityShelf();
@@ -65,29 +65,23 @@ public final class Currency {
 		if (config.isEnableEntity()) {
 			EntityCurrencyData data = entityCurrencies.get(entity);
 			if (data != null && data.value() > 0 && data.maxValue() > 0) {
-				boolean[] r = {false};
 				String eid = EntityCurrencies.getEid(entity);
-				PlayerEntityCurrency playerEntityCurrency = entityCurrencies.getPlayer(serverPlayer);
-				playerEntityCurrency.update(map -> {
-					PlayerEntityCurrencyData playerEntityCurrencyData = map.getOrDefault(eid, PlayerEntityCurrencyData.DEFAULT);
-					if (playerEntityCurrencyData.getValue().compareTo(BigDecimal.valueOf(data.maxValue())) >= 0) {
-						if (System.currentTimeMillis() - playerEntityCurrencyData.getLast() < data.cooldown()) {
-							return;
-						} else {
-							playerEntityCurrencyData.add(data.value());
-						}
-					} else {
-						playerEntityCurrencyData.add(data.value());
-					}
-					playerEntityCurrencyData.setLast(System.currentTimeMillis());
-					map.put(eid, playerEntityCurrencyData);
-					r[0] = true;
-				});
-				if (r[0]){
-					playerEntityCurrency.save();
-					PlayerCurrency playerCurrency = PlayerCurrency.getPlayerCurrency(serverPlayer);
-					playerCurrency.add(data.value(), "kill entity '"+eid+"' get");
+
+				PlayerEntityCurrency playerEntityCurrency = entityCurrencies.getPlayer(serverPlayer, eid);
+				PlayerEntityCurrencyData playerEntityCurrencyData = playerEntityCurrency.read(d1 -> d1);
+
+				if (playerEntityCurrencyData.getValue().compareTo(BigDecimal.valueOf(data.maxValue())) >= 0
+						&& System.currentTimeMillis() - playerEntityCurrencyData.getLast() < data.cooldown()) {
+					return;
 				}
+
+				playerEntityCurrencyData.add(data.value());
+				playerEntityCurrencyData.setLast(System.currentTimeMillis());
+				playerEntityCurrency.setData(playerEntityCurrencyData);
+				playerEntityCurrency.save();
+
+				PlayerCurrency playerCurrency = PlayerCurrency.getPlayerCurrency(serverPlayer);
+				playerCurrency.add(data.value(), "kill entity '" + eid + "' get");
 			}
 		}
 	}
@@ -105,7 +99,7 @@ public final class Currency {
 
 	public boolean sellMob(ServerPlayer serverPlayer,double price){
 		if (config.isEnableSellEntity()) {
-			List<Entity> entities = serverPlayer.level().getEntitiesOfClass(Entity.class, AABB.ofSize(serverPlayer.getBoundingBox().getCenter(), 32, 32, 32), entity -> entity instanceof Leashable leashable && leashable.getLeashHolder() == serverPlayer);
+			List<Entity> entities = EntityHelper.getPlayerLeash(serverPlayer);
 			if (entities.isEmpty()) return false;
 			for (Entity entity : entities) {
 				playerEntityShelf.sell(serverPlayer,entity,price);

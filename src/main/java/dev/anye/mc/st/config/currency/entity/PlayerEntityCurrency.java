@@ -9,8 +9,8 @@ import dev.anye.mc.st.config.ConfigDir;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerEntityCurrency extends _JsonConfigS<Map<String,PlayerEntityCurrencyData>> {
-	public PlayerEntityCurrency(String uuid) {
-		super(_File.getFilePath(ConfigDir.getPlayerCurrencyDir(uuid),"entities"+ _SuffixCDT.JSON_SUFFIX), new HashMap<>(), new TypeToken<>(){});
+public class PlayerEntityCurrency extends _JsonConfigS<PlayerEntityCurrencyData> {
+	public PlayerEntityCurrency(String uuid,String eid) {
+		super(_File.getFilePath(ConfigDir.getPlayerCurrencyEntityDir(uuid),eid + _SuffixCDT.JSON_SUFFIX),PlayerEntityCurrencyData.DEFAULT, new TypeToken<>(){});
 	}
 }

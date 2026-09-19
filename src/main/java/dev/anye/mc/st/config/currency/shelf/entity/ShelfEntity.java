@@ -8,6 +8,6 @@ import dev.anye.mc.st.config.ConfigDir;
 
 public class ShelfEntity extends _JsonConfigR<ShelfEntityData> {
 	public ShelfEntity(String key, ShelfEntityData defaultRawData) {
-		super(_File.getFilePath(ConfigDir.SHELF_ENTITY,key+ _SuffixCDT.JSON_SUFFIX), defaultRawData, new TypeToken<>(){}, true);
+		super(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ENTITY,key+ _SuffixCDT.JSON_SUFFIX), defaultRawData, new TypeToken<>(){}, true);
 	}
 }

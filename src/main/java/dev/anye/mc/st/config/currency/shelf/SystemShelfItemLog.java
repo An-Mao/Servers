@@ -11,6 +11,6 @@ import dev.anye.mc.st.config.ConfigDir;
  */
 public class SystemShelfItemLog extends _JsonConfigS<SystemShelfItemLogData> {
 	public SystemShelfItemLog(String key) {
-		super(_File.getFilePath(ConfigDir.SHELF_SYSTEM_ITEM_LOG,key + _SuffixCDT.JSON_SUFFIX), SystemShelfItemLogData.EMPTY, new TypeToken<>(){}, false);
+		super(_File.getFilePath(ConfigDir.CURRENCY_SHELF_SYSTEM_ITEM_LOG,key + _SuffixCDT.JSON_SUFFIX), SystemShelfItemLogData.EMPTY, new TypeToken<>(){}, false);
 	}
 }

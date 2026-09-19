@@ -50,7 +50,7 @@ public final class PlayerEntityShelf implements IShelf<Entity> {
 
 	public void loadEntities(){
 		entities.clear();
-		_File.getFiles(ConfigDir.SHELF_ENTITY, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
+		_File.getFiles(ConfigDir.CURRENCY_SHELF_ENTITY, _SuffixCDT.JSON_SUFFIX).forEach(path -> {
 			String uuid = _File.getFileNameWithoutExtension(path.getFileName().toString());
 			ShelfEntity item = new ShelfEntity(uuid,null);
 			if (item.data() != null){
@@ -175,7 +175,7 @@ public final class PlayerEntityShelf implements IShelf<Entity> {
 	public void remove(String key){
 		entities.remove(key);
 		try {
-			Files.move(Paths.get(_File.getFilePath(ConfigDir.SHELF_ENTITY, key + _SuffixCDT.JSON_SUFFIX)),Paths.get(_File.getFilePath(ConfigDir.SHELF_ENTITY_LOG, key + _SuffixCDT.JSON_SUFFIX)));
+			Files.move(Paths.get(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ENTITY, key + _SuffixCDT.JSON_SUFFIX)),Paths.get(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ENTITY_LOG, key + _SuffixCDT.JSON_SUFFIX)));
 		} catch (IOException e) {
 			throw new _IOException(e);
 		}

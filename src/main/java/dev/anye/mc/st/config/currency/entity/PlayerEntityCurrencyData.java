@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class PlayerEntityCurrencyData {
 	public static final PlayerEntityCurrencyData DEFAULT = new PlayerEntityCurrencyData();
+
 	private BigDecimal value = BigDecimal.ZERO;
 	private long last = 0;
 

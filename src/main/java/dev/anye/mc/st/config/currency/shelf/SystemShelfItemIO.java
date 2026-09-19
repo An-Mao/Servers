@@ -11,6 +11,6 @@ import dev.anye.mc.st.config.ConfigDir;
  */
 public class SystemShelfItemIO extends _JsonConfigR<SystemShelfItemData> {
 	public SystemShelfItemIO(String key) {
-		super(_File.getFilePath(ConfigDir.SHELF_SYSTEM_ITEM,key + _SuffixCDT.JSON_SUFFIX), null, new TypeToken<>(){}, false);
+		super(_File.getFilePath(ConfigDir.CURRENCY_SHELF_SYSTEM_ITEM,key + _SuffixCDT.JSON_SUFFIX), null, new TypeToken<>(){}, false);
 	}
 }

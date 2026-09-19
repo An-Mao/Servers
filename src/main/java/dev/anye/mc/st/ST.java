@@ -34,7 +34,7 @@ public class ST {
 		Language.loadLanguage();
 
 		_Pack.writeJsonFiles("assets/st/config/currency/entity/", ConfigDir.CURRENCY_ENTITY, "zombie@minecraft");
-		_Pack.writeJsonFiles("assets/st/config/currency/shelf/system/item/", ConfigDir.SHELF_SYSTEM_ITEM, "stone");
+		_Pack.writeJsonFiles("assets/st/config/currency/shelf/system/item/", ConfigDir.CURRENCY_SHELF_SYSTEM_ITEM, "stone");
 	}
 
 	public ST(IEventBus modEventBus, ModContainer modContainer) {

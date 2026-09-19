@@ -7,15 +7,20 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.phys.AABB;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 public final class EntityHelper {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -82,5 +87,12 @@ public final class EntityHelper {
 
 	public static ItemStack getSpawnEgg(EntityType<?> entityType,ItemStack or){
 		return SpawnEggItem.byId(entityType).map(ItemStack::new).orElse(or);
+	}
+
+	public static List<Entity> getPlayerLeash(ServerPlayer serverPlayer){
+		return getPlayerLeash(serverPlayer,32);
+	}
+	public static List<Entity> getPlayerLeash(ServerPlayer serverPlayer,int size){
+		return serverPlayer.level().getEntitiesOfClass(Entity.class, AABB.ofSize(serverPlayer.getBoundingBox().getCenter(), size, size, size), entity -> entity instanceof Leashable leashable && leashable.getLeashHolder() == serverPlayer);
 	}
 }

@@ -16,6 +16,6 @@ public class ShelfItem extends _JsonConfigR<ShelfItemData> {
 		this(uuid.toString(),newData);
 	}
 	public ShelfItem(String uuid, ShelfItemData newData) {
-		super(_File.getFilePath(ConfigDir.SHELF_ITEM,uuid+ _SuffixCDT.JSON_SUFFIX), newData, new TypeToken<>(){}, true);
+		super(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ITEM,uuid+ _SuffixCDT.JSON_SUFFIX), newData, new TypeToken<>(){}, true);
 	}
 }

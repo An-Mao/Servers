@@ -43,7 +43,7 @@ public final class PlayerItemShelf implements IShelf<ItemStack> {
 
 	public void loadItems(){
 		items.clear();
-		_File.getFiles(ConfigDir.SHELF_ITEM,_SuffixCDT.JSON_SUFFIX).forEach(path -> {
+		_File.getFiles(ConfigDir.CURRENCY_SHELF_ITEM,_SuffixCDT.JSON_SUFFIX).forEach(path -> {
 			String uuid = _File.getFileNameWithoutExtension(path.getFileName().toString());
 			//ConfigDir.SHELF_ITEM,path.getFileName().toString()
 			ShelfItem item = new ShelfItem(uuid,null);
@@ -146,14 +146,14 @@ public final class PlayerItemShelf implements IShelf<ItemStack> {
 	public void remove(String key){
 		items.remove(key);
 		try {
-			Files.move(Paths.get(_File.getFilePath(ConfigDir.SHELF_ITEM, key + _SuffixCDT.JSON_SUFFIX)),Paths.get(_File.getFilePath(ConfigDir.SHELF_ITEM_LOG, key + _SuffixCDT.JSON_SUFFIX)));
+			Files.move(Paths.get(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ITEM, key + _SuffixCDT.JSON_SUFFIX)),Paths.get(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ITEM_LOG, key + _SuffixCDT.JSON_SUFFIX)));
 		} catch (IOException e) {
 			throw new _IOException(e);
 		}
 	}
 	public void subItem(String key,ShelfItemData data,int count){
 		try {
-			Files.delete(Paths.get(_File.getFilePath(ConfigDir.SHELF_ITEM, key + _SuffixCDT.JSON_SUFFIX)));
+			Files.delete(Paths.get(_File.getFilePath(ConfigDir.CURRENCY_SHELF_ITEM, key + _SuffixCDT.JSON_SUFFIX)));
 		} catch (IOException e) {
 			throw new _IOException(e);
 		}
