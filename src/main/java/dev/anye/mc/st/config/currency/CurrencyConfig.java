@@ -5,55 +5,39 @@ import dev.anye.core.json._JsonConfigS;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
 
-public class CurrencyConfig extends _JsonConfigS<CurrencyConfig.Data> {
+public class CurrencyConfig extends _JsonConfigS<CurrencyConfigData> {
 	public static final String FILE = _File.getFilePath(ConfigDir.BASE,"currency.json");
 
 
 	public CurrencyConfig() {
-		super(FILE, new Data(), new TypeToken<>(){});
+		super(FILE, new CurrencyConfigData(), new TypeToken<>(){});
 	}
 
 
 	public double blockDefaultCurrency(){
-		return read(data1 -> data1.blockDefaultCurrency,0D);
+		return fetch(CurrencyConfigData::blockDefaultCurrency,0D);
+	}
+
+	public boolean isEnable(){
+		return fetch(CurrencyConfigData::isEnable,false);
 	}
 
 	public boolean isEnableBlock(){
-		return read(data1 -> data1.enable && data1.block,false);
+		return fetch(CurrencyConfigData::isEnableBlock,false);
 	}
 	public boolean isEnableEntity(){
-		return read(data1 -> data1.enable && data1.entity,false);
+		return fetch(CurrencyConfigData::isEnableEntity,false);
 	}
 
 	public boolean isEnableSellItem(){
-		return read(data1 -> data1.enable && data1.sellItem,false);
+		return fetch(CurrencyConfigData::isEnableSellItem,false);
 	}
 	public boolean isEnableSellEntity(){
-		return read(data1 -> data1.enable && data1.sellEntity,false);
+		return fetch(CurrencyConfigData::isEnableSellEntity,false);
 	}
 	public boolean isEnableSellXp(){
-		return read(data1 -> data1.enable && data1.sellXp,false);
+		return fetch(CurrencyConfigData::isEnableSellXp,false);
 	}
 
 
-	public boolean isEnable(){
-		return read(value -> value.enable,false);
-	}
-
-
-
-	public static class Data{
-		private boolean enable = true;
-
-		private boolean block = true;
-		private boolean entity = true;
-		private double blockDefaultCurrency = 0;
-		private double entityDefaultCurrency = 0;
-
-		private boolean sellItem = true;
-		private boolean sellEntity = true;
-		private boolean sellXp = true;
-
-
-	}
 }

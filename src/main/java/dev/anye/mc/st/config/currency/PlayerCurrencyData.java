@@ -1,5 +1,7 @@
 package dev.anye.mc.st.config.currency;
 
+import dev.anye.mc.st.helper.MsgHelper;
+
 import java.math.BigDecimal;
 
 public final class PlayerCurrencyData {
@@ -47,15 +49,38 @@ public final class PlayerCurrencyData {
 	public void add(double value){
 		add(BigDecimal.valueOf(value));
 	}
+	public void sub(double value){
+		sub(BigDecimal.valueOf(value));
+	}
 
 	public void add(BigDecimal value){
 		currency = currency.add(value);
 	}
-	public void sub(double value){
-		sub(BigDecimal.valueOf(value));
-	}
 	public void sub(BigDecimal value){
 		currency = currency.subtract(value);
 	}
+
+	public boolean addAndWriteLog(String uuid,BigDecimal value,String source){
+		if (lock) return false;
+		if (PlayerCurrencyLog.writeLog(uuid,source+"=>+"+value)) {
+			add(value);
+			return true;
+		}
+		return false;
+	}
+	public boolean subAndLog(String uuid,BigDecimal value,String source){
+		if (lock) return false;
+		if (!check(value)) {
+			//MsgHelper.sendMsgToPlayerF(off,"shelf.st.item.player.error.insufficient_funds");
+			return false;
+		}
+		if (PlayerCurrencyLog.writeLog(uuid,source+"=>-"+value)) {
+			sub(value);
+			return true;
+		}
+		//MsgHelper.sendMsgToPlayerF(off,"shelf.st.item.player.error.write_log");
+		return false;
+	}
+
 
 }

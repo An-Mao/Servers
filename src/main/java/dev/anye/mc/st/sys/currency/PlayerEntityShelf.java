@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -82,12 +83,11 @@ public final class PlayerEntityShelf implements IShelf<Entity> {
 			entities.forEach((s, shelfEntityData) -> {
 				EntityType<?> entityType = shelfEntityData.getEntityType();
 				ItemStack item = EntityHelper.getSpawnEgg(entityType,new ItemStack(Items.EGG));
+				item.set(DataComponents.CUSTOM_NAME,entityType.getDescription());
 				CustomData.update(DataComponents.CUSTOM_DATA,item, compoundTag -> compoundTag.putString(idKey(),s));
 				ItemLore itemLore = item.getOrDefault(DataComponents.LORE,ItemLore.EMPTY)
-						.withLineAdded(entityType.getDescription()
-						)
 						.withLineAdded(Component.literal(shelfEntityData.price() + " ")
-								.append(Language.getComponent(null,"currency.st.name"))
+								.append(Language.getComponent(serverPlayer,"currency.st.name"))
 								.withColor(TextColor.GOLD)
 						)
 						.withLineAdded(Component.literal(fastDateTime.setEpochMillis(shelfEntityData.time()).toDateString("-"))
@@ -115,12 +115,12 @@ public final class PlayerEntityShelf implements IShelf<Entity> {
 	}
 
 	@Override
-	public boolean sell(@NotNull ServerPlayer serverPlayer, Entity entity, double price){
+	public boolean sell(@NotNull ServerPlayer serverPlayer, Entity entity, BigDecimal price){
 		if (itemConfigIsLoad() && checkType(serverPlayer,entity)) {
 			if (!config.data().checkPrice(price)) {
 				MsgHelper.sendMsgToPlayerF(serverPlayer, "shelf.st.entity.player.error.price");
 			}
-			double fee = config.data().getFee(price);
+			BigDecimal fee = config.data().getFee(price);
 			if (PlayerCurrency.getPlayerCurrency(serverPlayer).sub(fee, "entity sell fee")) {
 				String uuid = System.currentTimeMillis() + "_" + serverPlayer.getStringUUID();
 				String fileTmp = uuid;
@@ -162,7 +162,7 @@ public final class PlayerEntityShelf implements IShelf<Entity> {
 				remove(key);
 
 				playerCurrency = PlayerCurrency.getPlayerCurrency(u, serverPlayer);
-				return playerCurrency.add(data.price() - config.data().getTax(data.price()), "sell entity '" + key + "'");
+				return playerCurrency.add(data.price().subtract(config.data().getTax(data.price())), "sell entity '" + key + "'");
 			}
 		} else {
 			MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.entity.buy.error.not_have");

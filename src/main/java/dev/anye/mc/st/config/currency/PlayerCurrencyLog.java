@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +32,7 @@ public final class PlayerCurrencyLog extends _JsonConfigS<List<PlayerCurrencyLog
 	public PlayerCurrencyLog(String uuid) {
 		super(path(uuid), List.of(), new TypeToken<>(){}, false);
 	}
-	public boolean writeLog(String source,double number){
+	public boolean writeLog(String source, BigDecimal number){
 		return writeLog(new PlayerCurrencyLogData(source, number));
 	}
 	public boolean writeLog(PlayerCurrencyLogData data){

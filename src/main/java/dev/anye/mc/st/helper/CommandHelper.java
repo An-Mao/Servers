@@ -2,6 +2,7 @@ package dev.anye.mc.st.helper;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.logging.LogUtils;
 import dev.anye.mc.st.config.Config;
@@ -24,11 +25,13 @@ import dev.anye.mc.st.menu.ShelfMenu;
 import dev.anye.mc.st.menu.TrashBinContainer;
 import dev.anye.mc.st.sys.currency.Currency;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Relative;
 import org.slf4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -110,6 +113,8 @@ public class CommandHelper {
 		BlackListConfig.INSTANCE.reload();
 		BanItemConfig.I.reload();
 		LoginReward.I.reload();
+
+		Currency.I.reload();
 		sendSuccess(context,"reload.success.all");
 		return SUCCESS;
 	}
@@ -169,7 +174,7 @@ public class CommandHelper {
 	public static int reward(CommandContext<CommandSourceStack> context) {
 
 
-		if (LoginReward.I.read(LoginRewardData::enable,false) && CommandConfig.I.read(CommandData::reward,false)) {
+		if (LoginReward.I.fetch(LoginRewardData::enable,false) && CommandConfig.I.fetch(CommandData::reward,false)) {
 			ServerPlayer ser = context.getSource().getPlayer();
 			if (ser == null) return FAILED;
 			if (LoginRewardHelper.getRewards(ser)) return SUCCESS;
@@ -178,7 +183,7 @@ public class CommandHelper {
 	}
 
 	public static int setHome(CommandContext<CommandSourceStack> context) {
-		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::setHome))) {
+		if (Boolean.TRUE.equals(CommandConfig.I.fetch(CommandData::setHome))) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
 				PlayerConfig pd = PlayerConfig.get(player.getStringUUID());
@@ -193,13 +198,13 @@ public class CommandHelper {
 	}
 
 	public static int home(CommandContext<CommandSourceStack> context) {
-		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::home))) {
+		if (Boolean.TRUE.equals(CommandConfig.I.fetch(CommandData::home))) {
 
 
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
 				PlayerConfig pd = PlayerConfig.get(player.getStringUUID());
-				PosData home = pd.read(playerData -> playerData.home);
+				PosData home = pd.fetch(playerData -> playerData.home);
 				if (home != null) {
 					pd.addBack(player);
 					if (_MF.tp(player, home)) {
@@ -214,7 +219,7 @@ public class CommandHelper {
 	}
 
 	public static int back(CommandContext<CommandSourceStack> context) {
-		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::back))) {
+		if (Boolean.TRUE.equals(CommandConfig.I.fetch(CommandData::back))) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null) {
 				PlayerConfig pd = PlayerConfig.get(player.getStringUUID());
@@ -234,7 +239,7 @@ public class CommandHelper {
 	private static final HashMap<String, UUID> tpaQueue = new HashMap<>();
 
 	public static int tpa(CommandContext<CommandSourceStack> context, ServerPlayer targetPlayer) {
-		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::tpa))) {
+		if (Boolean.TRUE.equals(CommandConfig.I.fetch(CommandData::tpa))) {
 			ServerPlayer player = context.getSource().getPlayer();
 			if (player != null && targetPlayer != null) {
 				tpaQueue.put(targetPlayer.getStringUUID(), player.getUUID());
@@ -250,18 +255,15 @@ public class CommandHelper {
 	}
 
 	public static int tpaAccept(CommandContext<CommandSourceStack> context) {
-		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::tpaAccept))) {
-			ServerPlayer player = context.getSource().getPlayer();
-			if (player != null) {
-				if (tpaQueue.containsKey(player.getStringUUID())) {
-					ServerPlayer targetPlayer = player.level().getServer().getPlayerList().getPlayer(tpaQueue.get(player.getStringUUID()));
-					if (targetPlayer != null) {
-						PlayerConfig.get(targetPlayer.getStringUUID()).addBack(targetPlayer);
-						targetPlayer.teleportTo(player.level(), player.getX(), player.getY(), player.getZ(), Relative.ALL, player.getYRot(), player.getXRot(), true);
-						sendSuccess(context,"command.tpa_accept.success");
-						tpaQueue.remove(player.getStringUUID());
-						return SUCCESS;
-					}
+		if (Boolean.TRUE.equals(CommandConfig.I.fetch(CommandData::tpaAccept))) {
+			if (context.getSource().getPlayer() instanceof ServerPlayer player && tpaQueue.containsKey(player.getStringUUID()) && player.level().getServer() instanceof MinecraftServer server) {
+				ServerPlayer targetPlayer = server.getPlayerList().getPlayer(tpaQueue.get(player.getStringUUID()));
+				if (targetPlayer != null) {
+					PlayerConfig.get(targetPlayer.getStringUUID()).addBack(targetPlayer);
+					targetPlayer.teleportTo(player.level(), player.getX(), player.getY(), player.getZ(), Relative.ALL, player.getYRot(), player.getXRot(), true);
+					sendSuccess(context, "command.tpa_accept.success");
+					tpaQueue.remove(player.getStringUUID());
+					return SUCCESS;
 				}
 			}
 		}
@@ -270,7 +272,7 @@ public class CommandHelper {
 	}
 
 	public static int tpaDeny(CommandContext<CommandSourceStack> context) {
-		return CommandConfig.I.read(commandData -> {
+		return CommandConfig.I.fetch(commandData -> {
 			if (commandData.tpaDeny()){
 				ServerPlayer player = context.getSource().getPlayer();
 				if (player != null && tpaQueue.containsKey(player.getStringUUID())) {
@@ -294,13 +296,13 @@ public class CommandHelper {
 
 	public static int sellItem(CommandContext<CommandSourceStack> context) {
 		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
-			double price = DoubleArgumentType.getDouble(context,"price");
-			if (price <= 0) {
+			String price = StringArgumentType.getString(context,"price");
+			if (price.isBlank()) {
 				sendSuccess(context,"sell.command.item.failed");
 				return FAILED;
 			}
 
-			if (Currency.I.sell(serverPlayer,serverPlayer.getMainHandItem(),price)){
+			if (Currency.I.sell(serverPlayer,serverPlayer.getMainHandItem(), new BigDecimal(price))){
 				sendSuccess(context,"sell.command.item.success");
 				return SUCCESS;
 			}
@@ -348,12 +350,10 @@ public class CommandHelper {
 
 	public static int sellMob(CommandContext<CommandSourceStack> context) {
 		if (context.getSource().getPlayer() instanceof ServerPlayer serverPlayer){
-			double price = DoubleArgumentType.getDouble(context,"price");
-			if (price > 0) {
-				if (Currency.I.sellMob(serverPlayer, price)) {
-					sendSuccess(context, "sell.command.mob.success");
-					return SUCCESS;
-				}
+			String price = StringArgumentType.getString(context,"price");
+			if (!price.isBlank() && Currency.I.sellMob(serverPlayer, new BigDecimal(price))) {
+				sendSuccess(context, "sell.command.mob.success");
+				return SUCCESS;
 			}
 			sendSuccess(context,"sell.command.mob.failed");
 		}

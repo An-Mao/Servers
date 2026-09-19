@@ -1,9 +1,12 @@
-package dev.anye.mc.st.config.currency.entity;
+package dev.anye.mc.st.sys.currency;
 
 import com.mojang.logging.LogUtils;
 import dev.anye.core.cdt._SuffixCDT;
 import dev.anye.core.system._File;
 import dev.anye.mc.st.config.ConfigDir;
+import dev.anye.mc.st.config.currency.entity.EntityCurrency;
+import dev.anye.mc.st.config.currency.entity.EntityCurrencyData;
+import dev.anye.mc.st.config.currency.entity.PlayerEntityCurrency;
 import dev.anye.mc.st.helper.EntityHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,11 +15,11 @@ import org.slf4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EntityCurrencies {
+public final class EntityCurrencyCenter {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private final Map<String,EntityCurrencyData> entities = new HashMap<>();
-	private final Map<String,Map<String,PlayerEntityCurrency>> player = new HashMap<>();
-	public EntityCurrencies(){
+	private final Map<String, EntityCurrencyData> entities = new HashMap<>();
+	private final Map<String,Map<String, PlayerEntityCurrency>> player = new HashMap<>();
+	public EntityCurrencyCenter(){
 		reload();
 	}
 	public void reload(){
@@ -40,13 +43,6 @@ public class EntityCurrencies {
 		return getPlayer(serverPlayer.getStringUUID(),eid);
 	}
 	public PlayerEntityCurrency getPlayer(String uuid,String eid){
-		/*if (!player.containsKey(uuid)){
-			player.put(uuid,new HashMap<>());
-		}
-		if (!player.get(uuid).containsKey(eid)){
-			player.get(uuid).put(eid,new PlayerEntityCurrency(uuid,eid));
-		}
-		return player.get(uuid).get(eid);*/
 		return player.computeIfAbsent(uuid, _ -> new HashMap<>()).computeIfAbsent(eid,_ -> new PlayerEntityCurrency(uuid,eid));
 	}
 
@@ -62,5 +58,9 @@ public class EntityCurrencies {
 	}
 	public static String getEid(LivingEntity entity){
 		return EntityHelper.getEntityRegStringIDWithX(entity,"@");
+	}
+
+	public void disconnect(ServerPlayer serverPlayer){
+		player.remove(serverPlayer.getStringUUID());
 	}
 }

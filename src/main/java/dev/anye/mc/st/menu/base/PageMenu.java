@@ -162,7 +162,7 @@ public abstract class PageMenu extends AbstractContainerMenu {
 		slotList.forEach(this::addSlot);
 		*/
 		int maxIndex = getItemSlotsMaxIndex();
-		LOGGER.debug("max index {}",maxIndex);
+		//LOGGER.debug("max index {}",maxIndex);
 		for (int i = 0; i < maxIndex; i++){
 			Slot s = itemSlots.get(i);
 

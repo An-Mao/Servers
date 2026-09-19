@@ -156,7 +156,7 @@ public class ClearConfig {
 		}
 
 		public String getMsg(int time) {
-			return read(entityClearData -> getMsg(entityClearData,time),"");
+			return fetch(entityClearData -> getMsg(entityClearData,time),"");
 		}
 		public static String getMsg(EntityClearData entityClearData,int time) {
 			return entityClearData.msg().getOrDefault(time, "");
@@ -170,7 +170,7 @@ public class ClearConfig {
 		}
 
 		public boolean isInBlackList(Entity entity) {
-			return read(entityClearData -> {
+			return fetch(entityClearData -> {
 				if (entityClearData.enable()){
 					return entityClearData.blackList().contains(EntityHelper.getEntityRegStringID(entity));
 				}

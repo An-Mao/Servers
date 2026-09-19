@@ -110,7 +110,7 @@ public class TrashBinContainer extends FooterMenu {
 
 
 	public static void open(ServerPlayer serverPlayer) {
-		if (Boolean.TRUE.equals(CommandConfig.I.read(CommandData::trash))) {
+		if (Boolean.TRUE.equals(CommandConfig.I.fetch(CommandData::trash))) {
 			if (serverPlayer == null) return;
 			if (ClearHelper.isClearTrashBin) {
 				MsgHelper.sendMsgToPlayerF(serverPlayer,"trash.command.error.cleaning");

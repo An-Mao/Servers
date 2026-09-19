@@ -45,7 +45,7 @@ public class TickEvent {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer && LoginHelper.checkLogin(serverPlayer)) {
 			String uuid = serverPlayer.getStringUUID();
 			loginTime.put(uuid, loginTime.getOrDefault(uuid, 0) + 1);
-			if (loginTime.get(uuid) >= LoginConfig.INSTANCE.read(LoginData::time,0)) {
+			if (loginTime.get(uuid) >= LoginConfig.INSTANCE.fetch(LoginData::time,0)) {
 				serverPlayer.connection.disconnect(Language.getComponent(serverPlayer,"login.failed"));
 				loginTime.remove(uuid);
 			}
@@ -57,7 +57,7 @@ public class TickEvent {
 	@SubscribeEvent
 	public static void onEntityTick(EntityTickEvent.Post event) {
 		if (event.getEntity().level().isClientSide()) return;
-		if (Boolean.TRUE.equals(Config.I.read(configData -> configData.clearAnomalousEntity))) {
+		if (Boolean.TRUE.equals(Config.I.fetch(configData -> configData.clearAnomalousEntity))) {
 			if (event.getEntity() instanceof LivingEntity livingEntity) {
 				if (livingEntity.getPose().equals(Pose.DYING)) {
 					if (livingEntity.deathTime > 20) {

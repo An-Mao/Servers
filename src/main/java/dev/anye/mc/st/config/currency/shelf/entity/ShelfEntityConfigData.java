@@ -1,20 +1,24 @@
 package dev.anye.mc.st.config.currency.shelf.entity;
 
 
-public record ShelfEntityConfigData(
-		boolean enable,int type,
-		double fee, boolean percentageFee,
-		double tax, boolean percentageTax,
-		double minPrice, double maxPrice) {
-	public static final ShelfEntityConfigData DEFAULT = new ShelfEntityConfigData(true,2,10,false,0.1,true,0,0);
+import dev.anye.mc.st.config.currency.shelf.ShelfItemConfigData;
 
-	public double getFee(double price){
-		return percentageFee ? price * fee : fee;
+import java.math.BigDecimal;
+
+public record ShelfEntityConfigData(
+		boolean enable, int type,
+		BigDecimal fee, boolean percentageFee,
+		BigDecimal tax, boolean percentageTax,
+		BigDecimal minPrice, BigDecimal maxPrice) {
+	public static final ShelfEntityConfigData DEFAULT = new ShelfEntityConfigData(true,2, ShelfItemConfigData.defaultFee,false,ShelfItemConfigData.defaultTax,true,BigDecimal.ZERO,BigDecimal.ZERO);
+
+	public BigDecimal getFee(BigDecimal price){
+		return percentageFee ? price.multiply(fee) : fee;
 	}
-	public double getTax(double price){
-		return percentageTax ? price * tax : tax;
+	public BigDecimal getTax(BigDecimal price){
+		return percentageTax ? price.multiply(tax) : tax;
 	}
-	public boolean checkPrice(double price){
-		return price > minPrice && price < (maxPrice == 0 ? Double.MAX_VALUE : maxPrice);
+	public boolean checkPrice(BigDecimal price){
+		return price.compareTo(minPrice) > 0 &&(maxPrice.compareTo(BigDecimal.ZERO) == 0 || price.compareTo(minPrice) < 0);
 	}
 }

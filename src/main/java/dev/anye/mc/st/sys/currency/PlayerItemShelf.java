@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public final class PlayerItemShelf implements IShelf<ItemStack> {
 			CustomData.update(DataComponents.CUSTOM_DATA,itemStack, compoundTag -> compoundTag.putString(idKey(),uuid));
 
 
-			ItemLore itemLore = itemStack.getOrDefault(DataComponents.LORE,ItemLore.EMPTY).withLineAdded(Component.literal(data.price() + " ").append(Language.getComponent(null,"currency.st.name")).withColor(TextColor.GOLD));
+			ItemLore itemLore = itemStack.getOrDefault(DataComponents.LORE,ItemLore.EMPTY).withLineAdded(Component.literal(data.price() + " ").append(Language.getComponent(serverPlayer,"currency.st.name")).withColor(TextColor.GOLD));
 
 			itemLore = itemLore.withLineAdded(Component.literal(fastDateTime.setEpochMillis(data.time()).toDateString("-")).append(" ").append(fastDateTime.toTimeString(":")).withColor(TextColor.BLUE));
 			itemStack.set(DataComponents.LORE,itemLore);
@@ -80,12 +81,12 @@ public final class PlayerItemShelf implements IShelf<ItemStack> {
 		return playerItems;
 	}
 
-	public boolean sell(@NotNull ServerPlayer serverPlayer, ItemStack stack, double price){
+	public boolean sell(@NotNull ServerPlayer serverPlayer, ItemStack stack, BigDecimal price){
 		if (itemConfigIsLoad()) {
 			if (!itemConfig.data().checkPrice(price)) {
 				MsgHelper.sendMsgToPlayerF(serverPlayer, "shelf.st.item.player.error.price");
 			}
-			double fee = itemConfig.data().getFee(price);
+			BigDecimal fee = itemConfig.data().getFee(price);
 			if (PlayerCurrency.getPlayerCurrency(serverPlayer).sub(fee, "item sell fee")) {
 				String uuid = System.currentTimeMillis() + "_" + serverPlayer.getStringUUID();
 				String fileTmp = uuid;
@@ -131,7 +132,7 @@ public final class PlayerItemShelf implements IShelf<ItemStack> {
 						subItem(key,data,count);
 					}
 					playerCurrency = PlayerCurrency.getPlayerCurrency(u,serverPlayer);
-					return playerCurrency.add(data.price() - itemConfig.data().getTax(data.price()),"sell item '" + key + "' 1");
+					return playerCurrency.add(data.price().subtract(itemConfig.data().getTax(data.price())),"sell item '" + key + "' 1");
 				}
 			}else {
 				MsgHelper.sendMsgToPlayerF(serverPlayer,"shelf.st.item.buy.error.not_have");

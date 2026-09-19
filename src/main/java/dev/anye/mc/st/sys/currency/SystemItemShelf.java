@@ -17,6 +17,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import org.slf4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public final class SystemItemShelf implements IShelf<ItemStack> {
@@ -73,7 +74,7 @@ public final class SystemItemShelf implements IShelf<ItemStack> {
 	}
 
 	@Override
-	public boolean sell(ServerPlayer serverPlayer, ItemStack target, double price) {
+	public boolean sell(ServerPlayer serverPlayer, ItemStack target, BigDecimal price) {
 		return false;
 	}
 
@@ -82,7 +83,7 @@ public final class SystemItemShelf implements IShelf<ItemStack> {
 		SystemShelfItemData data = items.get(itemKey);
 		if (data != null){
 			SystemShelfItemLog log = getLog(itemKey);
-			SystemShelfItemLogData logData = log.read(data1 -> data1,SystemShelfItemLogData.EMPTY);
+			SystemShelfItemLogData logData = log.fetch(data1 -> data1,SystemShelfItemLogData.EMPTY);
 			if (logData.count() >= data.count()){
 				if (data.autoReplenishment() > 0){
 					if (System.currentTimeMillis() - logData.lastTime() < data.autoReplenishment()){
@@ -103,8 +104,7 @@ public final class SystemItemShelf implements IShelf<ItemStack> {
 	}
 
 	@Override
-	public void remove(String key) {
-	}
+	public void remove(String key) {}
 
 	private boolean buy(ServerPlayer serverPlayer, String itemKey, SystemShelfItemData data){
 		PlayerSystemShelfItemLog playerSystemShelfItemLog = new PlayerSystemShelfItemLog(serverPlayer,itemKey);

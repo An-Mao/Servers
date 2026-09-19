@@ -17,7 +17,7 @@ public class LoginHelper {
 	private static final List<String> players = new ArrayList<>();
 
 	public static boolean checkLogin(ServerPlayer serverPlayer) {
-		if (Boolean.TRUE.equals(LoginConfig.INSTANCE.read(LoginData::enable))) {
+		if (Boolean.TRUE.equals(LoginConfig.INSTANCE.fetch(LoginData::enable))) {
 			return !LoginHelper.isLogin(serverPlayer);
 		}
 		return false;
@@ -51,12 +51,12 @@ public class LoginHelper {
 
 	public static boolean Login(ServerPlayer player, String password) {
 		if (isLogin(player)) {
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.read(LoginData::fail,""));
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.fetch(LoginData::fail,""));
 			return false;
 		}
 		boolean[] l = {false};
 		PlayerConfig playerConfig = PlayerConfig.get(player);
-		if (Boolean.TRUE.equals(playerConfig.read(playerData -> {
+		if (Boolean.TRUE.equals(playerConfig.fetch(playerData -> {
 			if (playerData.emptyPassword()){
 				l[0] = true;
 				return true;
@@ -68,10 +68,10 @@ public class LoginHelper {
 				playerConfig.save();
 			}
 			addLogin(player);
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.read(LoginData::success,""));
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.fetch(LoginData::success,""));
 			return true;
 		}else {
-			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.read(LoginData::fail,""));
+			MsgHelper.sendMsgToPlayerF(player, LoginConfig.INSTANCE.fetch(LoginData::fail,""));
 			return false;
 		}
 	}

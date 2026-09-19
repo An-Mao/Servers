@@ -11,7 +11,7 @@ import net.minecraft.server.permissions.PermissionCheck;
 import java.util.List;
 
 public class CommandData {
-	private static final String ROOT = CommandConfig.I.read(commandData -> commandData.commandRoot(),ST.MOD_ID);
+	private static final String ROOT = CommandConfig.I.fetch(commandData -> commandData.commandRoot(),ST.MOD_ID);
 	public static final PermissionCheck Permission_OP = Commands.LEVEL_ADMINS;
 	public static final PermissionCheck Permission_Player = Commands.LEVEL_ALL;
 	public final String root;

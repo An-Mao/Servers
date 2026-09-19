@@ -6,6 +6,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
+import java.math.BigDecimal;
+
 /**
  * 货架物品信息数据记录
  * @param playerUUID 上架的玩家uuid
@@ -14,8 +16,8 @@ import net.minecraft.world.item.ItemStack;
  * @param data 物品数据
  * @param time 上架时间
  */
-public record ShelfItemData (String playerUUID, int count, double price, JsonElement data, long time){
-	public ShelfItemData(ServerPlayer serverPlayer, double price, ItemStack stack){
+public record ShelfItemData (String playerUUID, int count, BigDecimal price, JsonElement data, long time){
+	public ShelfItemData(ServerPlayer serverPlayer, BigDecimal price, ItemStack stack){
 		this(serverPlayer.getStringUUID(),stack.count(),price, ItemHelper.itemToJson(stack,serverPlayer.level().registryAccess()),System.currentTimeMillis());
 	}
 	public ItemStack getItem(ServerLevel serverLevel){

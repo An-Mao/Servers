@@ -19,7 +19,7 @@ public class LoginConfig extends _JsonConfigS<LoginData> {
 	}
 
 	public void openLogin(ServerPlayer serverPlayer){
-		if (Boolean.TRUE.equals(read(LoginData::enable))){
+		if (Boolean.TRUE.equals(fetch(LoginData::enable))){
 			LoginHelper.openLogin(serverPlayer);
 		}
 	}

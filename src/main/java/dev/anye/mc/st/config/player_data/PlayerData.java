@@ -40,7 +40,7 @@ public class PlayerData {
 
 	public void addBack(PosData pd) {
 		if (backs == null) backs = new ArrayList<>();
-		else if (backs.size() >= CommandConfig.I.read(CommandData::backMaxCount,0)) backs.removeFirst();
+		else if (backs.size() >= CommandConfig.I.fetch(CommandData::backMaxCount,0)) backs.removeFirst();
 		backs.add(pd);
 	}
 

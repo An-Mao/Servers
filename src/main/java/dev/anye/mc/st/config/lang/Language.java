@@ -55,7 +55,7 @@ public class Language extends _JsonConfigX<Map<String, String>> {
 
 
 	public static String getLanguage() {
-		String lang = Config.I.read(configData -> configData.lang,"");
+		String lang = Config.I.fetch(configData -> configData.lang,"");
 		if (lang.isBlank() || lang.equals("auto")) {
 			Locale defaultLocale = Locale.getDefault();
 			lang = defaultLocale.getLanguage() + "_" + defaultLocale.getCountry();
@@ -86,6 +86,7 @@ public class Language extends _JsonConfigX<Map<String, String>> {
 		String msg = language.data().getOrDefault(key,def);
 		return MessageFormat.format(msg,value);
 	}
+
 
 	public static Component getComponent(ServerPlayer serverPlayer, String key) {
 		return Component.literal(translatable(serverPlayer,key));

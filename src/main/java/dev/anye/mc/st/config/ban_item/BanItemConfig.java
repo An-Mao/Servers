@@ -25,7 +25,7 @@ public class BanItemConfig extends _JsonConfigS<BanItemData> {
 	}
 
 	public List<String> getItems() {
-		return read(BanItemData::bannedItems,new ArrayList<>());
+		return fetch(BanItemData::bannedItems,new ArrayList<>());
 	}
 
 	public boolean checkItem(ItemStack itemStack) {
@@ -37,7 +37,7 @@ public class BanItemConfig extends _JsonConfigS<BanItemData> {
 	}
 
 	public boolean isBanned(String item) {
-		return read(banItemData -> {
+		return fetch(banItemData -> {
 			if (banItemData.enable()){
 				return banItemData.bannedItems().contains(item);
 			}
@@ -52,7 +52,7 @@ public class BanItemConfig extends _JsonConfigS<BanItemData> {
 	}
 
 	public boolean checkItemAndSend(Item itemStack, MinecraftServer server) {
-		return read(banItemData -> {
+		return fetch(banItemData -> {
 			if (banItemData.enable() && banItemData.bannedItems().contains(ItemHelper.getStringKey(itemStack))) {
 				MsgHelper.sendServerMsg(server, banItemData.msg());
 				return true;

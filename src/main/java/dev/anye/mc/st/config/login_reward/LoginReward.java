@@ -29,7 +29,7 @@ public class LoginReward extends _JsonConfigS<LoginRewardData> {
 	}
 
 	public List<ItemStack> getDayReward(String uuid) {
-		return read(loginRewardData -> {
+		return fetch(loginRewardData -> {
 			if (loginRewardData.enable()) {
 				List<String> list = getDayRewardList(loginRewardData);
 				if (list.isEmpty()) return new ArrayList<>();
@@ -86,7 +86,7 @@ public class LoginReward extends _JsonConfigS<LoginRewardData> {
 		}
 
 		public boolean gived(String uuid,final List<String> list) {
-			return read(map -> {
+			return fetch(map -> {
 				if (map.containsKey(LoginReward.getDayCheck())) {
 					list.addAll(map.get(LoginReward.getDayCheck()));
 					return !list.contains(uuid);
@@ -119,7 +119,7 @@ public class LoginReward extends _JsonConfigS<LoginRewardData> {
 
 		public int getLoginCount(String uuid) {
 			checkData(uuid);
-			return read(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).loginCount,-1);
+			return fetch(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).loginCount,-1);
 		}
 
 		public void setLoginCount(String uuid) {
@@ -130,7 +130,7 @@ public class LoginReward extends _JsonConfigS<LoginRewardData> {
 
 		public int getLastLoginIndex(String uuid) {
 			checkData(uuid);
-			return read(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).lastLoginIndex,-1);
+			return fetch(stringPlayerLoginDataMap -> stringPlayerLoginDataMap.get(uuid).lastLoginIndex,-1);
 		}
 
 		public void setLastLoginIndex(String uuid, int index) {

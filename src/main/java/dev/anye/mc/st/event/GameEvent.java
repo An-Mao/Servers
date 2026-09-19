@@ -41,7 +41,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public class GameEvent {
 	@SubscribeEvent
 	public static void onDamageFirst(EntityInvulnerabilityCheckEvent event) {
-		if (Boolean.TRUE.equals(LoginConfig.INSTANCE.read(LoginData::enable))) {
+		if (Boolean.TRUE.equals(LoginConfig.INSTANCE.fetch(LoginData::enable))) {
 			if (event.getEntity() instanceof ServerPlayer serverPlayer) {
 				if (!LoginHelper.isLogin(serverPlayer)) event.setInvulnerable(true);
 			}
@@ -81,12 +81,12 @@ public class GameEvent {
 		event.getDispatcher().register(Commands.literal("sell")
 				.then(Commands.literal("item")
 						.then(
-								Commands.argument("price", DoubleArgumentType.doubleArg(0)).executes(CommandHelper::sellItem)
+								Commands.argument("price", StringArgumentType.string()).executes(CommandHelper::sellItem)
 						)
 				)
 				.then(Commands.literal("mob")
 						.then(
-								Commands.argument("price", DoubleArgumentType.doubleArg(0)).executes(CommandHelper::sellMob)
+								Commands.argument("price", StringArgumentType.string()).executes(CommandHelper::sellMob)
 						)
 				)
 		);
@@ -138,6 +138,7 @@ public class GameEvent {
 	@SubscribeEvent
 	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+			Currency.I.disconnect(serverPlayer);
 			LoginConfig.INSTANCE.read(loginData -> {
 				if (loginData.enable()) {
 					LoginHelper.removeLogin(serverPlayer);
@@ -205,7 +206,7 @@ public class GameEvent {
 	}
 	@SubscribeEvent
 	public static void onAnvil(AnvilUpdateEvent event) {
-		if (event.getPlayer() instanceof ServerPlayer && Boolean.TRUE.equals(Config.I.read(configData -> configData.enchantmentExtract))) {
+		if (event.getPlayer() instanceof ServerPlayer && Boolean.TRUE.equals(Config.I.fetch(configData -> configData.enchantmentExtract))) {
 			EnchantmentExtract.onUpdate(event, event.getLeft(), event.getRight());
 		}
 	}

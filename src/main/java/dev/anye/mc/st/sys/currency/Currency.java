@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import dev.anye.mc.st.config.currency.BlockCurrency;
 import dev.anye.mc.st.config.currency.CurrencyConfig;
 import dev.anye.mc.st.config.currency.PlayerCurrency;
-import dev.anye.mc.st.config.currency.entity.EntityCurrencies;
 import dev.anye.mc.st.config.currency.entity.EntityCurrencyData;
 import dev.anye.mc.st.config.currency.entity.PlayerEntityCurrency;
 import dev.anye.mc.st.config.currency.entity.PlayerEntityCurrencyData;
@@ -25,7 +24,7 @@ public final class Currency {
 	private final CurrencyConfig config;
 
 	private final BlockCurrency blockCurrency;
-	private final EntityCurrencies entityCurrencies;
+	private final EntityCurrencyCenter entityCurrencyCenter;
 
 
 	private final PlayerItemShelf playerItemShelf;
@@ -35,7 +34,7 @@ public final class Currency {
 	public Currency(){
 		config = new CurrencyConfig();
 		blockCurrency = new BlockCurrency();
-		entityCurrencies = new EntityCurrencies();
+		entityCurrencyCenter = new EntityCurrencyCenter();
 
 		playerItemShelf = new PlayerItemShelf();
 		systemItemShelf = new SystemItemShelf();
@@ -45,7 +44,7 @@ public final class Currency {
 	public void reload(){
 		config.reload();
 		blockCurrency.reload();
-		entityCurrencies.reload();
+		entityCurrencyCenter.reload();
 		playerItemShelf.loadItems();
 		systemItemShelf.loadSystemItems();
 
@@ -61,16 +60,18 @@ public final class Currency {
 			}
 		}
 	}
+
+
 	public void entity(ServerPlayer serverPlayer, LivingEntity entity){
 		if (config.isEnableEntity()) {
-			EntityCurrencyData data = entityCurrencies.get(entity);
-			if (data != null && data.value() > 0 && data.maxValue() > 0) {
-				String eid = EntityCurrencies.getEid(entity);
+			EntityCurrencyData data = entityCurrencyCenter.get(entity);
+			if (data != null && data.isValid()) {
+				String eid = EntityCurrencyCenter.getEid(entity);
 
-				PlayerEntityCurrency playerEntityCurrency = entityCurrencies.getPlayer(serverPlayer, eid);
-				PlayerEntityCurrencyData playerEntityCurrencyData = playerEntityCurrency.read(d1 -> d1);
+				PlayerEntityCurrency playerEntityCurrency = entityCurrencyCenter.getPlayer(serverPlayer, eid);
+				PlayerEntityCurrencyData playerEntityCurrencyData = playerEntityCurrency.fetch(d1 -> d1);
 
-				if (playerEntityCurrencyData.getValue().compareTo(BigDecimal.valueOf(data.maxValue())) >= 0
+				if (playerEntityCurrencyData.getValue().compareTo(data.maxValue()) >= 0
 						&& System.currentTimeMillis() - playerEntityCurrencyData.getLast() < data.cooldown()) {
 					return;
 				}
@@ -86,7 +87,7 @@ public final class Currency {
 		}
 	}
 
-	public boolean sell(ServerPlayer serverPlayer,final ItemStack stack,double price){
+	public boolean sell(ServerPlayer serverPlayer,final ItemStack stack,BigDecimal price){
 		if (config.isEnableSellItem()){
 			if (playerItemShelf.sell(serverPlayer,stack,price)){
 				stack.setCount(0);
@@ -97,7 +98,7 @@ public final class Currency {
 		return false;
 	}
 
-	public boolean sellMob(ServerPlayer serverPlayer,double price){
+	public boolean sellMob(ServerPlayer serverPlayer,BigDecimal price){
 		if (config.isEnableSellEntity()) {
 			List<Entity> entities = EntityHelper.getPlayerLeash(serverPlayer);
 			if (entities.isEmpty()) return false;
@@ -123,4 +124,7 @@ public final class Currency {
 		return playerEntityShelf;
 	}
 
+	public void disconnect(ServerPlayer serverPlayer) {
+		entityCurrencyCenter.disconnect(serverPlayer);
+	}
 }

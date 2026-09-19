@@ -46,7 +46,7 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 		sendMessage(serverPlayer,raw,raw,value);
 	}
 	public void sendMessage(ServerPlayer serverPlayer,String raw,String def,Object... value) {
-		MsgHelper.sendMsgToPlayer(serverPlayer, Language.translatable(read(PlayerData::lang,""), raw, def, value));
+		MsgHelper.sendMsgToPlayer(serverPlayer, Language.translatable(fetch(PlayerData::lang,""), raw, def, value));
 	}
 
 	public void sendFormatMessage(ServerPlayer serverPlayer,String raw,Map<String,String> format,Object... value){
@@ -61,7 +61,7 @@ public class PlayerConfig extends _JsonConfigS<PlayerData> {
 	}
 
 	public String lang(){
-		return read(PlayerData::lang,"en_us");
+		return fetch(PlayerData::lang,"en_us");
 	}
 
 

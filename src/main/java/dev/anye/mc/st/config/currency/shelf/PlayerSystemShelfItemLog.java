@@ -24,7 +24,7 @@ public class PlayerSystemShelfItemLog extends _JsonConfigS<PlayerSystemShelfItem
 	 * @return bool
 	 */
 	public boolean checkAndAdd(SystemShelfItemData systemShelfItemData){
-		PlayerSystemShelfItemLogData oldPlayerData = read(playerSystemShelfItemLogData -> playerSystemShelfItemLogData, PlayerSystemShelfItemLogData.EMPTY);
+		PlayerSystemShelfItemLogData oldPlayerData = fetch(playerSystemShelfItemLogData -> playerSystemShelfItemLogData, PlayerSystemShelfItemLogData.EMPTY);
 		if (oldPlayerData != null){
 			if (oldPlayerData.count() >= systemShelfItemData.purchaseLimit()){
 				if (systemShelfItemData.cooldown() > 0){

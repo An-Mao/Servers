@@ -23,6 +23,6 @@ public class BlockCurrency extends _JsonConfigS<Map<String,Double>> {
 	}
 
 	public double getCurrency(Block block){
-		return read(map -> map.getOrDefault(block.getDescriptionId(),0D),0D);
+		return fetch(map -> map.getOrDefault(block.getDescriptionId(),0D),0D);
 	}
 }

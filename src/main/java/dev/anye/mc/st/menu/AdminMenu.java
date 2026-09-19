@@ -41,7 +41,7 @@ public class AdminMenu extends BorderPageMenu {
 	public void addInventory() {
 		itemHandler.set(0, ItemHelper.resource(Items.ANVIL,item -> {
 			item.set(DataComponents.CUSTOM_NAME,Language.getComponent(serverPlayer,"menu.st.admin.enchantment_extract"));
-			item.set(DataComponents.LORE,new ItemLore(List.of(Language.getComponent(serverPlayer, Boolean.TRUE.equals(Config.I.read(configData -> configData.enchantmentExtract)) ? "menu.st.admin.enchantment_extract.state.enable" : "menu.st.admin.enchantment_extract.state.disable"))));
+			item.set(DataComponents.LORE,new ItemLore(List.of(Language.getComponent(serverPlayer, Boolean.TRUE.equals(Config.I.fetch(configData -> configData.enchantmentExtract)) ? "menu.st.admin.enchantment_extract.state.enable" : "menu.st.admin.enchantment_extract.state.disable"))));
 		}),1);
 		this.addItemSlot(10,(x,y)->new SlotButton(itemHandler,itemHandler::set,0,x,y,player -> {
 			if (player instanceof ServerPlayer player1 && hasPermission(player1)){

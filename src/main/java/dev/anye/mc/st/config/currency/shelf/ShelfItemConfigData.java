@@ -1,5 +1,7 @@
 package dev.anye.mc.st.config.currency.shelf;
 
+import java.math.BigDecimal;
+
 /**
  * 货架物品配置数据类
  * @param enable 是否启用，禁用后玩家不能上架物品到货架
@@ -12,13 +14,26 @@ package dev.anye.mc.st.config.currency.shelf;
  */
 public record ShelfItemConfigData(
 		boolean enable,
-		double fee, boolean percentageFee,
-		double tax, boolean percentageTax,
-		double minPrice, double maxPrice
+		BigDecimal fee, boolean percentageFee,
+		BigDecimal tax, boolean percentageTax,
+		BigDecimal minPrice, BigDecimal maxPrice
 ){
-	public static final ShelfItemConfigData DEFAULT = new ShelfItemConfigData(true,10,false,0.1,true,0,0);
+	public static final BigDecimal defaultFee = new BigDecimal("5");
+	public static final BigDecimal defaultTax = new BigDecimal("0.1");
+	public static final ShelfItemConfigData DEFAULT = new ShelfItemConfigData(true, defaultFee,false, defaultTax,true,BigDecimal.ZERO,BigDecimal.ZERO);
 
-	public double getFee(double price){
+
+	public BigDecimal getFee(BigDecimal price){
+		return percentageFee ? price.multiply(fee) : fee;
+	}
+	public BigDecimal getTax(BigDecimal price){
+		return percentageTax ? price.multiply(tax) : tax;
+	}
+	public boolean checkPrice(BigDecimal price){
+		return price.compareTo(minPrice) > 0 &&(maxPrice.compareTo(BigDecimal.ZERO) == 0 || price.compareTo(minPrice) < 0);
+	}
+
+	/*public double getFee(double price){
 		return percentageFee ? price * fee : fee;
 	}
 	public double getTax(double price){
@@ -26,5 +41,5 @@ public record ShelfItemConfigData(
 	}
 	public boolean checkPrice(double price){
 		return price > minPrice && price < (maxPrice == 0 ? Double.MAX_VALUE : maxPrice);
-	}
+	}*/
 }

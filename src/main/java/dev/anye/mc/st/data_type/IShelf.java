@@ -3,6 +3,7 @@ package dev.anye.mc.st.data_type;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IShelf<T> {
@@ -12,7 +13,7 @@ public interface IShelf<T> {
 	}
 	int count();
 	List<ItemStack> all(ServerPlayer serverPlayer);
-	boolean sell(ServerPlayer serverPlayer, T target, double price);
+	boolean sell(ServerPlayer serverPlayer, T target, BigDecimal price);
 	boolean buy(ServerPlayer serverPlayer,String key);
 
 	void remove(String key);

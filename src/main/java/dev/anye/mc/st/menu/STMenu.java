@@ -46,7 +46,7 @@ public final class STMenu extends BorderPageMenu {
 		stack.set(DataComponents.PROFILE,serverPlayer.getProfile());
 		stack.set(DataComponents.LORE,new ItemLore(List.of(
 				Component.literal("uuid:").append(serverPlayer.getStringUUID()),
-				Component.literal(PlayerCurrency.getPlayerCurrency(serverPlayer).read(PlayerCurrencyData::currency,0) + Language.getComponent(serverPlayer,"currency.st.name").getString()).withColor(TextColor.GOLD)
+				Component.literal(PlayerCurrency.getPlayerCurrency(serverPlayer).fetch(PlayerCurrencyData::currency,0) + Language.getComponent(serverPlayer,"currency.st.name").getString()).withColor(TextColor.GOLD)
 		)));
 		this.itemHandler.set(itemIndex, ItemResource.of(stack.copy()),1);
 		this.addItemSlot(10,(x, y) -> new SlotButton(this.itemHandler,this.itemHandler::set,itemIndex,x,y, _ -> {}));

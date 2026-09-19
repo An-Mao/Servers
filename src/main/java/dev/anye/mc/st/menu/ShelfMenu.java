@@ -55,7 +55,6 @@ public class ShelfMenu extends BorderPageMenu {
 
 	public void playerClick(Player player,int index){
 		if (player instanceof ServerPlayer player1) {
-			LOGGER.debug("playerClick");
 			ItemStack stack = this.itemHandler.getResource(index).toStack();
 			if (stack.isEmpty()){
 				return;
