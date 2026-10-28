@@ -1,0 +1,11 @@
+{
+  "price": 0.1,
+  "count": 99999,
+  "autoReplenishment": 10000,
+  "purchaseLimit": 100,
+  "cooldown": 100000,
+  "data": {
+    "id": "minecraft:stone",
+    "count": 2
+  }
+}

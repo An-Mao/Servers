@@ -1,0 +1,69 @@
+package dev.anye.mc.st.config.clear;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public record EntityClearData(
+	boolean enable,
+	int autoClearTime,
+	int allEntityLimit,
+	int defaultEntityLimit,
+	boolean stopSpawn,
+	Map<String, Integer> entityLimit,
+	boolean clearMob,
+	boolean clearAnimal,
+	boolean clearPet,
+	boolean clearNpc,
+	boolean clearXp,
+	boolean safeEntityItem,
+	int safeDistance,
+	boolean clearName,
+	String limitClearMsg,
+	Map<Integer, String> msg,
+	List<String> blackList,
+	List<String> whiteList) {
+	public static final EntityClearData DEFAULT = new EntityClearData(
+			true,
+			300,
+			350,
+			50,
+			true,
+			EntityLimitDefault(),
+			true,
+			true,
+			false,
+			false,
+			false,
+			true,
+			70,
+			false,
+			"clear.entity.limit",
+			MsgDefault(),
+			List.of("minecraft:slime"),
+			List.of("minecraft:chicken")
+
+	);
+	private static Map<Integer, String> MsgDefault() {
+		Map<Integer, String> map = new HashMap<>();
+		map.put(0, "clear.entity.done");
+		map.put(1, "clear.normal.1");
+		map.put(2, "clear.normal.2");
+		map.put(3, "clear.normal.3");
+		map.put(4, "clear.normal.4");
+		map.put(5, "clear.normal.5");
+		map.put(6, "clear.normal.6");
+		map.put(7, "clear.normal.7");
+		map.put(8, "clear.normal.8");
+		map.put(9, "clear.normal.9");
+		map.put(10, "clear.normal.10");
+		map.put(30, "clear.normal.30");
+		map.put(60, "clear.normal.60");
+		return map;
+	}
+	private static Map<String, Integer> EntityLimitDefault(){
+		Map<String, Integer> map = new HashMap<>();
+		map.put("minecraft:bee",50);
+		return map;
+	}
+}

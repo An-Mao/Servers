@@ -1,0 +1,117 @@
+{
+  "command.tpa_deny.failed": "Tpa deny failed",
+  "command.tpa_deny.success": "Tpa deny successfully",
+  "command.tpa_accept.failed": "Tpa accept failed",
+  "command.tpa_accept.success": "Tpa accept successfully",
+  "command.tpa.failed": "Tpa failed",
+  "command.tpa.success": "Tpa successfully",
+  "command.tpa.msg": "TpaRequest.js",
+  "command.tpa.msg.tip": " sent you a TPA request.",
+  "command.tpa.msg.accept": "[Click here to agree]",
+  "command.back.failed": "Back failed",
+  "command.back.success": "Back successfully",
+  "command.home.failed": "Back home failed",
+  "command.home.success": "Back home successfully",
+  "command.set_home.failed": "Set home failed",
+  "command.set_home.success": "Set home successfully",
+  "ban.item.deny": "Banned items cleared",
+  "login.menu.button.clear": "Clear",
+  "login.menu.button.login": "Login",
+  "login.menu.title": "Please input password",
+  "login.success": "Login successful",
+  "login.failed": "Login failed",
+  "trash.command.error.cleaning": "Cleaning up now. Please wait.",
+  "trash.command.error.has_player": "A player is checking the trash, please wait.",
+  "trash.menu.title": "Trash Bin",
+  "trash.menu.button.previous_page": "Previous Page",
+  "trash.menu.button.next_page": "Next Page",
+  "trash.menu.button.home_page": "Home Page",
+  "trash.menu.button.tips": "--",
+  "blacklist.deny": "You do not have permission to join the current server",
+  "clear.entity.limit": "Discovery of a large number of entities to begin liquidation",
+  "clear.entity.done": "clear $clear.count entity",
+  "clear.item.done": "clear $clear.count item,send '/st trash' to open the trash bin",
+  "clear.normal.1": "clear in 1 second",
+  "clear.normal.2": "clear in 2 second",
+  "clear.normal.3": "clear in 3 second",
+  "clear.normal.4": "clear in 4 second",
+  "clear.normal.5": "clear in 5 second",
+  "clear.normal.6": "clear in 6 second",
+  "clear.normal.7": "clear in 7 second",
+  "clear.normal.8": "clear in 8 second",
+  "clear.normal.9": "clear in 9 second",
+  "clear.normal.10": "clear in 10 second",
+  "clear.normal.30": "clear in 30 second",
+  "clear.normal.60": "clear in 60 second",
+  "reload.success.all": "Reload all config successfully.",
+  "reload.success.config": "Reload config successfully.",
+  "reload.success.player_group": "Reload player group successfully.",
+  "reload.success.clear": "Reload clear successfully.",
+  "reload.success.msg": "Reload msg successfully.",
+  "reload.success.black_list": "Reload black list successfully.",
+  "reload.success.language": "Reload language successfully.",
+  "get_server_info.command.listen.failed": "Get server info failed",
+  "get_server_info.command.listen.info": "-----info-----",
+  "get_server_info.command.listen.host": "host",
+  "get_server_info.command.listen.port": "port",
+  "get_server_info.command.listen.description": "description",
+  "get_server_info.command.listen.version": "version",
+  "set_lang.command.success": "set language success",
+  "set_lang.command.wainning": "the code language not load",
+  "set_lang.command.failed": "set language failed",
+
+  "currency.st.name": "MeowCoins",
+
+  "sell.command.item.success":"sell item success",
+  "sell.command.item.failed":"sell item failed",
+
+  "command.st.my":"PLAYER UUID：$uuid\n CURRENCY：$currency",
+
+  "shelf.st.item.player.error.write_log":"Currency log write error",
+  "shelf.st.item.player.error.locked":"Currency system is locked",
+  "shelf.st.item.player.error.insufficient_funds":"Insufficient funds",
+  "shelf.st.item.player.error.currency_overrun":"Currency overrun",
+  "shelf.st.item.player.error.price":"Currency range error",
+
+  "shelf.st.entity.player.error.price":"Currency range error",
+  "shelf.st.entity.player.error.insufficient_funds":"Insufficient funds",
+  "shelf.st.entity.buy.error.not_have":"The item is empty",
+
+
+  "currency.st.player.config.error":"Player currency system is error",
+  "shelf.st.item.config.error":"Item Shelf Config is error",
+  "shelf.st.item.buy.error.not_have":"The item is empty",
+  "shelf.st.item.buy.success": "Buy Success",
+  "shelf.st.item.buy.failed": "Buy Failed",
+  "shelf.st.shelf.buy.success": "Buy Success",
+  "shelf.st.shelf.buy.failed": "Buy Failed",
+
+
+
+
+
+
+
+
+  "menu.st.st.trash.name": "Open Trash Bin",
+  "menu.st.st.shelf.item.name": "Open Item Shelf",
+  "menu.st.st.shelf.system.item.name": "Open System Item Shelf",
+  "menu.st.st.shelf.player.entity.name": "Open Entity Shelf",
+
+  "menu.st.st.admin.name": "Open Admin Menu",
+
+
+  "menu.st.shelf.item.title": "Item Shelf",
+
+
+  "menu.st.admin.title": "Admin Menu",
+  "menu.st.admin.enchantment_extract": "Enable/Disable Enchantment Extract",
+  "menu.st.admin.enchantment_extract.state.enable": "Enable",
+  "menu.st.admin.enchantment_extract.state.disable": "Disable",
+
+  "menu.st.button.tips": "--",
+  "menu.st.button.previous_page": "Previous Page",
+  "menu.st.button.first_page": "First Page",
+  "menu.st.button.next_page": "Next Page",
+  "menu.st.button.home_page": "Home Page"
+}
