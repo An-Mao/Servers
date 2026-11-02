@@ -1,0 +1,113 @@
+# 项目授权许可协议声明
+
+# Project License and Authorization Notice
+
+**中文版本**
+
+## 一、定义
+
+本协议所称“项目”，是指与本协议一同公开、发布、传播或提供的项目、产品、源代码、程序、素材、文档、资源、数据及其他不确定类型的相关内容。除非另有明确说明，以上内容以下统一称为“项目”。
+
+## 二、生效时间
+
+本授权许可协议声明自本文件首次与项目一同公开、发布或提供之日起生效，并适用于该日期之后按照本声明进行授权的项目版本。
+
+## 三、默认授权许可
+
+除项目中的第三方内容、第三方依赖项或其他具有独立授权条款的内容外，本项目默认同时提供以下两种许可方式：
+
+1. **GNU General Public License（GPL）**
+2. **Creative Commons Attribution-ShareAlike（CC BY-SA）**
+
+使用者可以根据自身使用目的、项目性质及其他实际需求，自行选择其中一种许可作为适用于其使用行为的授权依据。
+
+选择其中一种许可后，应遵守所选择许可协议的全部条款。两种许可之间相互独立，选择其中一种并不意味着必须同时遵守另一种许可的全部义务。
+
+## 四、历史版本及授权变更
+
+如项目在包含本授权许可协议声明之前，已经存在其他授权许可协议，则：
+
+* 在本文件正式包含于项目之前发布的项目版本，继续适用其发布时所采用的原有许可协议；
+* 自本文件正式包含于项目之日起，后续发布的项目版本按照本声明所规定的新授权许可执行；
+* 本声明不会追溯改变此前已经发布版本的授权条件。
+
+除非相关版本的原授权协议另有规定，任何人均不得仅因后续版本采用新的授权方式，而要求此前版本自动适用新的授权条款。
+
+## 五、停止更新后的 CC0 授权
+
+自项目停止更新之日起计算，满 **十（10）年** 后，本项目由项目权利人所拥有并能够合法授权的相关内容，将以 **CC0（Creative Commons Zero）** 形式进行授权，不再设置基于本项目本身的其他额外授权限制。
+
+在进入 CC0 状态后，除依法不能放弃、不能转让或不属于项目权利人所拥有的权利外，项目权利人不再主张任何额外的版权许可限制。
+
+本条不影响第三方内容、第三方代码、第三方素材、第三方依赖项或其他依法受独立许可约束的内容；此类内容仍应按照其各自适用的许可协议执行。
+
+## 六、本文件的性质
+
+本文件属于**授权声明及许可说明文件**，而非项目运行、使用、修改、复制、发布或再分发所必需的组成部分。
+
+使用、复制、修改、发布或再分发项目时，**原则上无需附带本授权许可协议声明文件本身**。
+
+如使用者选择同时保留、复制、分发或附带本授权许可协议声明文件，则该行为不产生额外的授权限制；本文件作为项目授权声明的一部分，其效力仍按照本声明所规定的适用范围执行。
+
+## 七、其他说明
+
+本声明旨在明确项目在不同发布阶段所适用的授权方式。对于项目中不属于项目权利人所有的第三方内容，应以相关内容自身的许可协议、授权声明及适用法律为准。
+
+如本声明与适用于特定第三方内容的强制性许可条款存在冲突，则相关第三方许可条款仅在其适用范围内优先适用。
+
+---
+
+**English Version**
+
+## 1. Definitions
+
+For the purposes of this Notice, the term **“Project”** refers to any project, product, source code, software, materials, documentation, resources, data, assets, or other content of an unspecified or mixed nature that is published, distributed, provided, or made available together with this Notice. Unless otherwise expressly stated, all such content shall collectively be referred to as the **“Project.”**
+
+## 2. Effective Date
+
+This Project License and Authorization Notice shall become effective from the date on which this document is first publicly released, distributed, or made available together with the Project, and shall apply to Project versions authorized under this Notice from that date onward.
+
+## 3. Default Licenses
+
+Except for third-party content, third-party dependencies, or other materials that are subject to their own independent license terms, the Project is, by default, made available under the following two licensing options:
+
+1. **GNU General Public License (GPL)**
+2. **Creative Commons Attribution-ShareAlike (CC BY-SA)**
+
+Users may independently choose either one of these licenses according to their intended use, the nature of their own project, and other applicable circumstances.
+
+Once a license is selected, the user shall comply with all applicable terms and conditions of that selected license. The two licenses are independent of each other, and selecting one does not by itself require compliance with all obligations of the other.
+
+## 4. Previous Versions and Changes to Licensing
+
+If the Project was previously distributed under another license before this Notice was included with the Project:
+
+* Project versions released before this Notice was officially included shall continue to be governed by the license applicable to those versions at the time of their release;
+* Project versions released from the date on which this Notice is officially included shall be governed by the new licensing terms specified in this Notice;
+* This Notice shall not retroactively modify or replace the licensing terms applicable to previously released versions.
+
+Unless otherwise permitted by the original license of a particular version, a subsequent change in licensing shall not, by itself, cause previously released versions to become subject to the new license.
+
+## 5. CC0 After Ten Years of Discontinued Development
+
+Beginning on the date on which the Project ceases to receive updates, after a period of **ten (10) years**, all portions of the Project that are owned by the Project's rights holder and may legally be licensed by that rights holder shall be made available under **CC0 (Creative Commons Zero)**, without any additional restrictions imposed by the Project itself.
+
+Once the Project enters CC0 status, except for rights that cannot legally be waived, transferred, or otherwise relinquished, or rights that are not owned by the Project's rights holder, the rights holder shall not impose additional copyright licensing restrictions on the Project.
+
+This provision does not affect third-party content, third-party code, third-party materials, third-party dependencies, or any other content governed by separate license terms. Such content shall remain subject to its respective applicable licenses.
+
+## 6. Nature of This Notice
+
+This document is an **authorization and licensing notice** and is not a required component of the Project for the purpose of operating, using, modifying, copying, publishing, or redistributing the Project.
+
+Accordingly, users are **not required to include or distribute this Notice itself** when using, copying, modifying, publishing, or redistributing the Project.
+
+If a user voluntarily retains, copies, distributes, or includes this Notice together with the Project, such inclusion shall not impose any additional licensing restrictions. This Notice shall continue to have effect solely within the scope and under the terms specified herein.
+
+## 7. Additional Provisions
+
+This Notice is intended to clarify the licensing terms applicable to the Project at different stages of its distribution and development.
+
+For any third-party content that is not owned by the Project's rights holder, the license terms, authorization notices, and applicable laws governing such third-party content shall apply.
+
+Where this Notice conflicts with a mandatory licensing requirement applicable to specific third-party content, the relevant third-party license shall prevail solely to the extent applicable to that content.
